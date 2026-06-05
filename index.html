@@ -1,5 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
+const PREBAKED_URL = 'https://supabase.com/dashboard/project/rmgdywekbtsxinmnxtui';
+const PREBAKED_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJtZ2R5d2VrYnRzeGlubW54dHVpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1NTUzNTYsImV4cCI6MjA5NjEzMTM1Nn0.bXfyArmEfy0_EzMsXM_tfttdBnPDKsFHhisg3a57QyA';
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -13,373 +15,177 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root {
-  --brand: #0f4c81;
-  --brand-light: #1a6bbf;
-  --brand-pale: #e8f1fb;
-  --accent: #2dd4a7;
-  --accent-dark: #1aad86;
-  --surface: #ffffff;
-  --surface2: #f5f7fa;
-  --surface3: #eef1f6;
-  --border: rgba(0,0,0,0.09);
-  --border2: rgba(0,0,0,0.14);
-  --text: #111827;
-  --text2: #4b5563;
-  --text3: #9ca3af;
-  --danger: #dc2626;
-  --danger-bg: #fef2f2;
-  --warn: #d97706;
-  --warn-bg: #fffbeb;
-  --success: #059669;
-  --success-bg: #ecfdf5;
-  --radius: 12px;
-  --radius-sm: 8px;
-  --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
-}
-* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-html, body { height: 100%; overflow: hidden; background: var(--surface2); }
-body { font-family: 'DM Sans', sans-serif; color: var(--text); font-size: 15px; }
-
-/* ── Layout ── */
-#app { height: 100vh; display: flex; flex-direction: column; max-width: 430px; margin: 0 auto; background: var(--surface); position: relative; overflow: hidden; box-shadow: 0 0 40px rgba(0,0,0,0.12); }
-.screen { display: none; flex-direction: column; height: 100%; overflow: hidden; }
-.screen.active { display: flex; }
-.topbar { background: var(--brand); color: #fff; padding: 52px 16px 14px; display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
-.topbar h1 { font-size: 17px; font-weight: 600; flex: 1; letter-spacing: -0.01em; }
-.topbar .back-btn { background: rgba(255,255,255,0.15); border: none; border-radius: 50%; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; color: #fff; cursor: pointer; flex-shrink: 0; }
-.topbar .back-btn:active { background: rgba(255,255,255,0.25); }
-.conn-pill { font-size: 11px; font-weight: 500; padding: 4px 9px; border-radius: 20px; display: flex; align-items: center; gap: 4px; background: rgba(255,255,255,0.18); color: #fff; }
-.conn-pill.online { background: rgba(45,212,167,0.25); }
-.body { flex: 1; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 10px; -webkit-overflow-scrolling: touch; }
-.body-pad { padding-bottom: 24px; }
-
-/* ── Cards ── */
-.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; box-shadow: var(--shadow); }
-.card-label { font-size: 11px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; }
-
-/* ── Buttons ── */
-.btn { width: 100%; padding: 14px; font-size: 15px; font-weight: 600; border-radius: var(--radius); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-family: 'DM Sans', sans-serif; transition: opacity 0.15s, transform 0.1s; }
-.btn:active { transform: scale(0.98); opacity: 0.9; }
-.btn-primary { background: var(--brand); color: #fff; }
-.btn-accent { background: var(--accent); color: #065f46; }
-.btn-ghost { background: var(--surface2); color: var(--text); border: 1px solid var(--border2); }
-.btn-danger { background: var(--danger-bg); color: var(--danger); border: 1px solid rgba(220,38,38,0.2); }
-.btn-sm { padding: 9px 16px; font-size: 13px; width: auto; border-radius: var(--radius-sm); }
-
-/* ── Inputs ── */
-input, select, textarea { width: 100%; font-size: 15px; font-family: 'DM Sans', sans-serif; padding: 11px 13px; border: 1px solid var(--border2); border-radius: var(--radius-sm); background: var(--surface2); color: var(--text); outline: none; transition: border-color 0.15s, box-shadow 0.15s; }
-input:focus, select:focus, textarea:focus { border-color: var(--brand); box-shadow: 0 0 0 3px rgba(15,76,129,0.12); background: #fff; }
-textarea { resize: none; }
-.input-row { display: flex; gap: 8px; }
-.input-row input { flex: 1; }
-
-/* ── Tech grid ── */
-.tech-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.tech-tile { padding: 14px 12px; border-radius: var(--radius); border: 1.5px solid var(--border); background: var(--surface2); cursor: pointer; text-align: center; transition: border-color 0.15s, background 0.15s; }
-.tech-tile:active { background: var(--brand-pale); }
-.tech-tile.selected { border-color: var(--brand); background: var(--brand-pale); }
-.tech-avatar { width: 40px; height: 40px; border-radius: 50%; background: #dde9f7; color: var(--brand); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; margin: 0 auto 8px; }
-.tech-tile.selected .tech-avatar { background: var(--brand); color: #fff; }
-.tech-name { font-size: 13px; font-weight: 500; color: var(--text); }
-
-/* ── List rows ── */
-.list-row { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: background 0.12s; }
-.list-row:active { background: var(--surface2); }
-.row-icon { width: 42px; height: 42px; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
-.row-icon.purple { background: #ede9fe; color: #5b21b6; }
-.row-icon.green { background: #d1fae5; color: #065f46; }
-.row-icon.blue { background: var(--brand-pale); color: var(--brand); }
-.row-icon.orange { background: #fef3c7; color: #92400e; }
-.row-icon.red { background: var(--danger-bg); color: var(--danger); }
-.row-meta { flex: 1; min-width: 0; }
-.row-name { font-size: 14px; font-weight: 500; }
-.row-sub { font-size: 12px; color: var(--text3); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.progress-bar { height: 3px; background: var(--surface3); border-radius: 2px; margin-top: 6px; overflow: hidden; }
-.progress-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width 0.4s; }
-
-/* ── Status dot ── */
-.dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
-.dot.done { background: var(--accent); }
-.dot.pending { background: var(--surface3); border: 1.5px solid var(--border2); }
-
-/* ── Radio chips ── */
-.chip-group { display: flex; flex-wrap: wrap; gap: 7px; }
-.chip { padding: 7px 14px; border-radius: 20px; border: 1px solid var(--border2); background: var(--surface2); cursor: pointer; font-size: 13px; font-weight: 500; color: var(--text2); transition: all 0.12s; font-family: 'DM Sans', sans-serif; }
-.chip:active { transform: scale(0.96); }
-.chip.active { border-color: var(--brand); background: var(--brand-pale); color: var(--brand); }
-.chip.danger.active { border-color: var(--danger); background: var(--danger-bg); color: var(--danger); }
-
-/* ── Scanner ── */
-.scan-zone { border: 2px dashed var(--border2); border-radius: var(--radius); overflow: hidden; position: relative; background: #000; min-height: 180px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; }
-.scan-zone video { width: 100%; height: 180px; object-fit: cover; display: none; }
-.scan-zone video.active { display: block; }
-.scan-overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 8px; }
-.scan-frame { width: 180px; height: 80px; border: 2px solid var(--accent); border-radius: 6px; position: relative; }
-.scan-frame::before, .scan-frame::after { content: ''; position: absolute; background: var(--accent); }
-.scan-line { position: absolute; top: 0; left: 4px; right: 4px; height: 2px; background: var(--accent); animation: scan 2s ease-in-out infinite; opacity: 0.8; }
-@keyframes scan { 0%,100% { top: 4px; } 50% { top: calc(100% - 6px); } }
-.scan-hint { font-size: 12px; color: rgba(255,255,255,0.7); margin-top: 8px; }
-.scan-result-bar { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 13px; display: flex; align-items: center; gap: 10px; margin-top: 8px; }
-.scan-result-code { font-family: 'DM Mono', monospace; font-size: 14px; color: var(--brand); font-weight: 500; flex: 1; }
-.scan-result-ok { color: var(--success); font-size: 18px; }
-
-/* ── Sync banner ── */
-.sync-banner { background: var(--warn-bg); border: 1px solid rgba(217,119,6,0.2); border-radius: var(--radius); padding: 12px 14px; display: flex; align-items: center; gap: 10px; }
-.sync-banner-text { flex: 1; font-size: 13px; color: var(--warn); font-weight: 500; }
-
-/* ── Section header ── */
-.section-hd { font-size: 12px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; padding: 4px 0 2px; }
-
-/* ── Toast ── */
-#toast { position: absolute; bottom: 24px; left: 16px; right: 16px; background: var(--text); color: #fff; padding: 13px 16px; border-radius: var(--radius); font-size: 14px; font-weight: 500; text-align: center; z-index: 100; transform: translateY(80px); transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1), opacity 0.25s; opacity: 0; pointer-events: none; }
-#toast.show { transform: translateY(0); opacity: 1; }
-#toast.success { background: #065f46; }
-#toast.error { background: var(--danger); }
-
-/* ── Admin badge ── */
-.admin-badge { font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 20px; background: rgba(255,255,255,0.2); color: #fff; border: 1px solid rgba(255,255,255,0.3); }
-
-/* ── Tabs ── */
-.tab-bar { display: flex; border-bottom: 1px solid var(--border); flex-shrink: 0; background: var(--surface); }
-.tab { flex: 1; padding: 12px 8px; text-align: center; font-size: 13px; font-weight: 500; color: var(--text3); cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.15s; }
-.tab.active { color: var(--brand); border-bottom-color: var(--brand); }
-.tab-panel { display: none; flex: 1; overflow-y: auto; padding: 14px; }
-.tab-panel.active { display: block; }
-
-/* ── Confirm modal ── */
-.modal-backdrop { display: none; position: absolute; inset: 0; background: rgba(0,0,0,0.45); z-index: 200; align-items: flex-end; }
-.modal-backdrop.open { display: flex; }
-.modal-sheet { background: var(--surface); border-radius: 20px 20px 0 0; padding: 20px; width: 100%; display: flex; flex-direction: column; gap: 10px; }
-.modal-title { font-size: 16px; font-weight: 600; }
-.modal-body { font-size: 14px; color: var(--text2); line-height: 1.5; }
-
-/* ── Login screen ── */
-#screen-login { background: var(--surface); }
-.login-header { background: var(--brand); padding: 56px 24px 28px; }
-.login-logo { display: flex; align-items: center; gap: 10px; color: #fff; margin-bottom: 6px; }
-.login-logo i { font-size: 28px; }
-.login-logo span { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; }
-.login-tagline { color: rgba(255,255,255,0.65); font-size: 13px; }
-
-/* ── Unit type indicator ── */
-.type-pill { font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 20px; letter-spacing: 0.02em; }
-.type-pill.bait { background: #d1fae5; color: #065f46; }
-.type-pill.fly { background: var(--brand-pale); color: var(--brand); }
-
-/* ── Empty state ── */
-.empty { text-align: center; padding: 40px 20px; color: var(--text3); }
-.empty i { font-size: 36px; margin-bottom: 10px; display: block; }
-.empty p { font-size: 14px; }
-
-/* ── Supabase config warning ── */
-.config-warn { background: var(--warn-bg); border: 1px solid rgba(217,119,6,0.25); border-radius: var(--radius-sm); padding: 10px 13px; font-size: 12px; color: var(--warn); line-height: 1.5; margin-top: 4px; }
-.config-warn strong { font-weight: 600; }
+:root{--brand:#0f4c81;--brand-light:#1a6bbf;--brand-pale:#e8f1fb;--accent:#2dd4a7;--surface:#fff;--surface2:#f5f7fa;--surface3:#eef1f6;--border:rgba(0,0,0,0.09);--border2:rgba(0,0,0,0.14);--text:#111827;--text2:#4b5563;--text3:#9ca3af;--danger:#dc2626;--danger-bg:#fef2f2;--warn:#d97706;--warn-bg:#fffbeb;--success:#059669;--success-bg:#ecfdf5;--radius:12px;--radius-sm:8px;--shadow:0 1px 3px rgba(0,0,0,0.08),0 1px 2px rgba(0,0,0,0.04)}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;background:var(--surface2)}
+body{font-family:'DM Sans',sans-serif;color:var(--text);font-size:15px}
+#app{height:100vh;display:flex;flex-direction:column;max-width:430px;margin:0 auto;background:var(--surface);position:relative;overflow:hidden;box-shadow:0 0 40px rgba(0,0,0,0.12)}
+.screen{display:none;flex-direction:column;height:100%;overflow:hidden}
+.screen.active{display:flex}
+.topbar{background:var(--brand);color:#fff;padding:52px 16px 14px;display:flex;align-items:center;gap:10px;flex-shrink:0}
+.topbar h1{font-size:17px;font-weight:600;flex:1;letter-spacing:-0.01em}
+.back-btn{background:rgba(255,255,255,0.15);border:none;border-radius:50%;width:34px;height:34px;display:flex;align-items:center;justify-content:center;color:#fff;cursor:pointer;flex-shrink:0}
+.back-btn:active{background:rgba(255,255,255,0.25)}
+.conn-pill{font-size:11px;font-weight:500;padding:4px 9px;border-radius:20px;display:flex;align-items:center;gap:4px;background:rgba(255,255,255,0.18);color:#fff}
+.conn-pill.online{background:rgba(45,212,167,0.25)}
+.body{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;-webkit-overflow-scrolling:touch;padding-bottom:24px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow)}
+.card-label{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px}
+.btn{width:100%;padding:14px;font-size:15px;font-weight:600;border-radius:var(--radius);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;font-family:'DM Sans',sans-serif;transition:opacity .15s,transform .1s}
+.btn:active{transform:scale(0.98);opacity:.9}
+.btn-primary{background:var(--brand);color:#fff}
+.btn-ghost{background:var(--surface2);color:var(--text);border:1px solid var(--border2)}
+.btn-danger{background:var(--danger-bg);color:var(--danger);border:1px solid rgba(220,38,38,0.2)}
+.btn-sm{padding:9px 16px;font-size:13px;width:auto;border-radius:var(--radius-sm)}
+input,select,textarea{width:100%;font-size:15px;font-family:'DM Sans',sans-serif;padding:11px 13px;border:1px solid var(--border2);border-radius:var(--radius-sm);background:var(--surface2);color:var(--text);outline:none;transition:border-color .15s,box-shadow .15s}
+input:focus,select:focus,textarea:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(15,76,129,0.12);background:#fff}
+textarea{resize:none}
+.tech-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tech-tile{padding:14px 12px;border-radius:var(--radius);border:1.5px solid var(--border);background:var(--surface2);cursor:pointer;text-align:center;transition:border-color .15s,background .15s}
+.tech-tile.selected{border-color:var(--brand);background:var(--brand-pale)}
+.tech-avatar{width:40px;height:40px;border-radius:50%;background:#dde9f7;color:var(--brand);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;margin:0 auto 8px}
+.tech-tile.selected .tech-avatar{background:var(--brand);color:#fff}
+.tech-name{font-size:13px;font-weight:500}
+.list-row{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:background .12s}
+.list-row:active{background:var(--surface2)}
+.row-icon{width:42px;height:42px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.row-icon.purple{background:#ede9fe;color:#5b21b6}
+.row-icon.green{background:#d1fae5;color:#065f46}
+.row-icon.blue{background:var(--brand-pale);color:var(--brand)}
+.row-meta{flex:1;min-width:0}
+.row-name{font-size:14px;font-weight:500}
+.row-sub{font-size:12px;color:var(--text3);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.progress-bar{height:3px;background:var(--surface3);border-radius:2px;margin-top:6px;overflow:hidden}
+.progress-fill{height:100%;background:var(--accent);border-radius:2px;transition:width .4s}
+.dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.dot.done{background:var(--accent)}
+.dot.pending{background:var(--surface3);border:1.5px solid var(--border2)}
+.chip-group{display:flex;flex-wrap:wrap;gap:7px}
+.chip{padding:7px 14px;border-radius:20px;border:1px solid var(--border2);background:var(--surface2);cursor:pointer;font-size:13px;font-weight:500;color:var(--text2);font-family:'DM Sans',sans-serif}
+.chip.active{border-color:var(--brand);background:var(--brand-pale);color:var(--brand)}
+.chip.danger.active{border-color:var(--danger);background:var(--danger-bg);color:var(--danger)}
+.scan-zone{border:2px dashed var(--border2);border-radius:var(--radius);overflow:hidden;position:relative;background:#000;min-height:180px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer}
+.scan-zone video{width:100%;height:180px;object-fit:cover;display:none}
+.scan-zone video.active{display:block}
+.scan-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px}
+.scan-frame{width:180px;height:80px;border:2px solid var(--accent);border-radius:6px;position:relative}
+.scan-line{position:absolute;top:0;left:4px;right:4px;height:2px;background:var(--accent);animation:scan 2s ease-in-out infinite;opacity:.8}
+@keyframes scan{0%,100%{top:4px}50%{top:calc(100% - 6px)}}
+.scan-hint{font-size:12px;color:rgba(255,255,255,0.7);margin-top:8px}
+.scan-result-bar{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 13px;display:flex;align-items:center;gap:10px;margin-top:8px}
+.scan-code{font-family:'DM Mono',monospace;font-size:14px;color:var(--brand);font-weight:500;flex:1}
+.sync-banner{background:var(--warn-bg);border:1px solid rgba(217,119,6,0.2);border-radius:var(--radius);padding:12px 14px;display:flex;align-items:center;gap:10px}
+.sync-banner-text{flex:1;font-size:13px;color:var(--warn);font-weight:500}
+.section-hd{font-size:12px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;padding:4px 0 2px}
+#toast{position:absolute;bottom:24px;left:16px;right:16px;background:var(--text);color:#fff;padding:13px 16px;border-radius:var(--radius);font-size:14px;font-weight:500;text-align:center;z-index:100;transform:translateY(80px);transition:transform .25s cubic-bezier(0.34,1.56,0.64,1),opacity .25s;opacity:0;pointer-events:none}
+#toast.show{transform:translateY(0);opacity:1}
+#toast.success{background:#065f46}
+#toast.error{background:var(--danger)}
+.type-pill{font-size:11px;font-weight:600;padding:3px 8px;border-radius:20px}
+.type-pill.bait{background:#d1fae5;color:#065f46}
+.type-pill.fly{background:var(--brand-pale);color:var(--brand)}
+.empty{text-align:center;padding:40px 20px;color:var(--text3)}
+.empty i{font-size:36px;margin-bottom:10px;display:block}
+.empty p{font-size:14px}
+.modal-backdrop{display:none;position:absolute;inset:0;background:rgba(0,0,0,0.45);z-index:200;align-items:flex-end}
+.modal-backdrop.open{display:flex}
+.modal-sheet{background:var(--surface);border-radius:20px 20px 0 0;padding:20px;width:100%;display:flex;flex-direction:column;gap:10px}
+.modal-title{font-size:16px;font-weight:600}
+.modal-body{font-size:14px;color:var(--text2);line-height:1.5}
+.login-header{background:var(--brand);padding:56px 24px 28px}
+.login-logo{display:flex;align-items:center;gap:10px;color:#fff;margin-bottom:6px}
+.login-logo i{font-size:28px}
+.login-logo span{font-size:22px;font-weight:700;letter-spacing:-0.02em}
+.login-tagline{color:rgba(255,255,255,0.65);font-size:13px}
+.setup-card{background:var(--warn-bg);border:1px solid rgba(217,119,6,0.25);border-radius:var(--radius);padding:14px 16px}
+.setup-card p{font-size:13px;color:var(--warn);line-height:1.5}
+.setup-card strong{font-weight:600}
 </style>
 </head>
 <body>
 <div id="app">
 
-<!-- ══════════════════ LOGIN ══════════════════ -->
+<!-- LOGIN -->
 <div id="screen-login" class="screen active">
   <div class="login-header">
     <div class="login-logo"><i class="ti ti-bug"></i><span>PestTrack</span></div>
     <div class="login-tagline">Field inspection management</div>
   </div>
-  <div class="body body-pad">
-    <p class="section-hd">Who's on shift today?</p>
+  <div class="body">
+    <div id="setup-warning" class="setup-card" style="display:none">
+      <p><strong>Setup required</strong><br>No Supabase connection configured. Contact your supervisor to get the connection URL for this device.</p>
+    </div>
+    <div id="loading-techs" style="text-align:center;padding:20px;color:var(--text3)">
+      <i class="ti ti-loader-2" style="font-size:24px;display:block;margin-bottom:8px"></i>
+      <span style="font-size:13px">Loading technicians…</span>
+    </div>
+    <p class="section-hd" id="techs-label" style="display:none">Who's on shift today?</p>
     <div class="tech-grid" id="tech-grid"></div>
-    <div class="card" style="margin-top:2px">
+    <div class="card" id="custom-name-card" style="display:none">
       <div class="card-label">Or enter name manually</div>
       <input type="text" id="tech-custom" placeholder="Technician name…" autocomplete="off">
     </div>
     <div style="margin-top:auto;padding-top:8px">
-      <button class="btn btn-primary" onclick="doLogin()">
+      <button class="btn btn-primary" id="start-btn" onclick="doLogin()" style="display:none">
         <i class="ti ti-arrow-right"></i> Start service visit
-      </button>
-      <button class="btn btn-ghost" onclick="openAdmin()" style="margin-top:8px">
-        <i class="ti ti-settings"></i> Admin / setup
       </button>
     </div>
   </div>
 </div>
 
-<!-- ══════════════════ SITES ══════════════════ -->
+<!-- SITES -->
 <div id="screen-sites" class="screen">
   <div class="topbar">
     <i class="ti ti-bug" style="font-size:22px;opacity:0.9"></i>
     <h1>Service visits</h1>
-    <span class="conn-pill" id="conn-badge"><i class="ti ti-wifi-off" style="font-size:13px"></i> Offline</span>
+    <span class="conn-pill" id="conn-badge"><i class="ti ti-wifi-off" style="font-size:13px"></i></span>
   </div>
-  <div class="body body-pad">
+  <div class="body">
     <div id="sync-banner" class="sync-banner" style="display:none">
       <i class="ti ti-cloud-upload" style="font-size:18px;color:var(--warn)"></i>
       <span class="sync-banner-text" id="sync-text">Records pending sync</span>
       <button class="btn btn-sm btn-ghost" onclick="doSync()" style="border-color:rgba(217,119,6,0.3)">Sync</button>
     </div>
-    <div style="padding:2px 0 0">
-      <p style="font-size:13px;color:var(--text2)" id="tech-greeting"></p>
-    </div>
+    <p style="font-size:13px;color:var(--text2)" id="tech-greeting"></p>
     <p class="section-hd">Active sites</p>
     <div id="site-list"></div>
     <div style="margin-top:auto;padding-top:8px">
-      <button class="btn btn-ghost" onclick="showScreen('screen-login')">
-        <i class="ti ti-logout"></i> Sign out
-      </button>
+      <button class="btn btn-ghost" onclick="signOut()"><i class="ti ti-logout"></i> Sign out</button>
     </div>
   </div>
 </div>
 
-<!-- ══════════════════ LOCATIONS ══════════════════ -->
+<!-- LOCATIONS -->
 <div id="screen-locations" class="screen">
   <div class="topbar">
     <button class="back-btn" onclick="showScreen('screen-sites')"><i class="ti ti-arrow-left"></i></button>
     <h1 id="loc-title">Locations</h1>
   </div>
-  <div class="body body-pad">
+  <div class="body">
     <p class="section-hd" id="loc-site-label"></p>
     <div id="location-list"></div>
   </div>
 </div>
 
-<!-- ══════════════════ UNITS ══════════════════ -->
+<!-- UNITS -->
 <div id="screen-units" class="screen">
   <div class="topbar">
     <button class="back-btn" onclick="showScreen('screen-locations')"><i class="ti ti-arrow-left"></i></button>
     <h1 id="units-title">Units</h1>
     <span style="font-size:12px;color:rgba(255,255,255,0.7)" id="units-count"></span>
   </div>
-  <div class="body body-pad">
+  <div class="body">
     <div id="unit-list"></div>
   </div>
 </div>
 
-<!-- ══════════════════ INSPECT ══════════════════ -->
+<!-- INSPECT -->
 <div id="screen-inspect" class="screen">
   <div class="topbar">
     <button class="back-btn" onclick="showScreen('screen-units')"><i class="ti ti-arrow-left"></i></button>
     <h1 id="inspect-title">Inspect</h1>
   </div>
-  <div class="body body-pad" id="inspect-body"></div>
-</div>
-
-<!-- ══════════════════ ADMIN ══════════════════ -->
-<div id="screen-admin" class="screen">
-  <div class="topbar">
-    <button class="back-btn" onclick="showScreen('screen-login')"><i class="ti ti-arrow-left"></i></button>
-    <h1>Admin</h1>
-    <span class="admin-badge">Setup</span>
-  </div>
-  <div class="tab-bar">
-    <div class="tab active" onclick="switchTab('tab-config')">Config</div>
-    <div class="tab" onclick="switchTab('tab-sites')">Sites</div>
-    <div class="tab" onclick="switchTab('tab-techs')">Technicians</div>
-    <div class="tab" onclick="switchTab('tab-export')">Export</div>
-  </div>
-
-  <!-- Config tab -->
-  <div class="tab-panel active" id="tab-config">
-    <div class="card">
-      <div class="card-label">Supabase URL</div>
-      <input type="url" id="cfg-url" placeholder="https://xxxx.supabase.co" autocomplete="off">
-    </div>
-    <div class="card">
-      <div class="card-label">Supabase anon key</div>
-      <input type="password" id="cfg-key" placeholder="eyJhbGci…" autocomplete="off">
-    </div>
-    <div class="config-warn">
-      <strong>Setup:</strong> Create a table called <code>pest_inspections</code> in your Supabase project with Row Level Security disabled (or configure anon policy). All columns map automatically from the JSON payload.
-    </div>
-    <button class="btn btn-primary" onclick="saveConfig()" style="margin-top:4px">
-      <i class="ti ti-device-floppy"></i> Save configuration
-    </button>
-    <button class="btn btn-ghost" onclick="testConnection()" style="margin-top:8px">
-      <i class="ti ti-plug"></i> Test connection
-    </button>
-  </div>
-
-  <!-- Sites tab -->
-  <div class="tab-panel" id="tab-sites">
-    <div id="admin-site-list" style="display:flex;flex-direction:column;gap:8px"></div>
-    <button class="btn btn-accent" onclick="openAddSite()" style="margin-top:8px">
-      <i class="ti ti-plus"></i> Add new site
-    </button>
-  </div>
-
-  <!-- Technicians tab -->
-  <div class="tab-panel" id="tab-techs">
-    <div id="admin-tech-list" style="display:flex;flex-direction:column;gap:8px"></div>
-    <div class="card">
-      <div class="card-label">Add technician</div>
-      <div class="input-row">
-        <input type="text" id="new-tech-name" placeholder="Full name">
-        <button class="btn btn-accent btn-sm" onclick="addTech()" style="white-space:nowrap">Add</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Export tab -->
-  <div class="tab-panel" id="tab-export">
-    <div class="card">
-      <div class="card-label">Stored records</div>
-      <p style="font-size:13px;color:var(--text2)" id="export-count">Loading…</p>
-    </div>
-    <button class="btn btn-primary" onclick="exportCSV()"><i class="ti ti-file-spreadsheet"></i> Export CSV</button>
-    <button class="btn btn-ghost" onclick="exportJSON()" style="margin-top:8px"><i class="ti ti-file-code"></i> Export JSON</button>
-    <button class="btn btn-danger" onclick="confirmClearAll()" style="margin-top:8px"><i class="ti ti-trash"></i> Clear all local data</button>
-  </div>
-</div>
-
-<!-- ══════════════════ MODALS ══════════════════ -->
-<!-- Add site modal -->
-<div class="modal-backdrop" id="modal-add-site">
-  <div class="modal-sheet">
-    <div class="modal-title">New site</div>
-    <input type="text" id="new-site-name" placeholder="Site name (e.g. Sandton Office Park)">
-    <input type="text" id="new-site-addr" placeholder="Address">
-    <div style="display:flex;gap:8px;margin-top:4px">
-      <button class="btn btn-ghost" onclick="closeModal('modal-add-site')">Cancel</button>
-      <button class="btn btn-accent" onclick="addSite()"><i class="ti ti-plus"></i> Add site</button>
-    </div>
-  </div>
-</div>
-
-<!-- Add location modal -->
-<div class="modal-backdrop" id="modal-add-location">
-  <div class="modal-sheet">
-    <div class="modal-title">New location</div>
-    <input type="text" id="new-loc-name" placeholder="Location name (e.g. Kitchen)">
-    <select id="new-loc-icon">
-      <option value="ti-building">Poultry House</option>
-      <option value="ti-building">Storage</option>
-      <option value="ti-building">Canteen or Change Room</option>
-      <option value="ti-building">Office</option>
-      <option value="ti-building">Building</option>
-      <option value="ti-box">Retail Shop</option>
-      <option value="ti-building">Fence line</option>
-    </select>
-    <div style="display:flex;gap:8px;margin-top:4px">
-      <button class="btn btn-ghost" onclick="closeModal('modal-add-location')">Cancel</button>
-      <button class="btn btn-accent" onclick="addLocation()"><i class="ti ti-plus"></i> Add location</button>
-    </div>
-  </div>
-</div>
-
-<!-- Add unit modal -->
-<div class="modal-backdrop" id="modal-add-unit">
-  <div class="modal-sheet">
-    <div class="modal-title">New inspection unit</div>
-    <input type="text" id="new-unit-label" placeholder="Label (e.g. Bait box BB-01)">
-    <input type="text" id="new-unit-barcode" placeholder="Barcode (e.g. BB-001-SND)">
-    <select id="new-unit-type">
-      <option value="bait">Bait box</option>
-      <option value="fly">Fly unit</option>
-    </select>
-    <div style="display:flex;gap:8px;margin-top:4px">
-      <button class="btn btn-ghost" onclick="closeModal('modal-add-unit')">Cancel</button>
-      <button class="btn btn-accent" onclick="addUnit()"><i class="ti ti-plus"></i> Add unit</button>
-    </div>
-  </div>
+  <div class="body" id="inspect-body"></div>
 </div>
 
 <!-- Confirm modal -->
@@ -394,92 +200,99 @@ textarea { resize: none; }
   </div>
 </div>
 
-<!-- Toast -->
 <div id="toast"></div>
-</div><!-- #app -->
+</div>
 
-<!-- ZXing barcode library -->
 <script src="https://cdn.jsdelivr.net/npm/@zxing/library@0.21.3/umd/index.min.js"></script>
 <script>
+// ── CONFIG ──────────────────────────────────────────────────────────────────
+// Pre-bake your Supabase URL here when distributing to field devices.
+// Leave blank to require first-run setup (not recommended for field devices).
+const PREBAKED_URL = '';   // e.g. 'https://xxxx.supabase.co'
+const PREBAKED_KEY = '';   // anon/public key only
 
-// ══════════════════════════════════════════════
-// STATE & STORAGE
-// ══════════════════════════════════════════════
-
-const DB_KEY = {
-  records: 'pt_records',
-  pending: 'pt_pending',
-  sites: 'pt_sites',
-  techs: 'pt_techs',
-  config: 'pt_config',
+const DB = {
+  get url()     { return PREBAKED_URL || localStorage.getItem('pt_url') || ''; },
+  get anonKey() { return PREBAKED_KEY || localStorage.getItem('pt_anon_key') || ''; },
+  get records() { try { return JSON.parse(localStorage.getItem('pt_records') || '[]'); } catch { return []; } },
+  set records(v){ localStorage.setItem('pt_records', JSON.stringify(v)); },
+  get pending() { try { return JSON.parse(localStorage.getItem('pt_pending') || '[]'); } catch { return []; } },
+  set pending(v){ localStorage.setItem('pt_pending', JSON.stringify(v)); },
+  // Offline cache of remote data
+  get cachedSites() { try { return JSON.parse(localStorage.getItem('pt_sites_cache') || 'null'); } catch { return null; } },
+  set cachedSites(v){ localStorage.setItem('pt_sites_cache', JSON.stringify(v)); },
+  get cachedTechs() { try { return JSON.parse(localStorage.getItem('pt_techs_cache') || 'null'); } catch { return null; } },
+  set cachedTechs(v){ localStorage.setItem('pt_techs_cache', JSON.stringify(v)); },
 };
 
-function ls(key) {
-  try { return JSON.parse(localStorage.getItem(key) || 'null'); } catch { return null; }
-}
-function lsSave(key, val) {
-  localStorage.setItem(key, JSON.stringify(val));
-}
-
-const DEFAULT_TECHS = [
-  {id:'t1', name:'Sipho Dlamini', initials:'SD'},
-  {id:'t2', name:'Naledi Mokoena', initials:'NM'},
-  {id:'t3', name:'Thabo Sithole', initials:'TS'},
-  {id:'t4', name:'Ayesha Patel', initials:'AP'},
-];
-
-const DEFAULT_SITES = [
-  {id:'s1', name:'Sandton Office Park', address:'Sandton, Johannesburg', locations:[
-    {id:'l1', name:'Kitchen / canteen', icon:'ti-tools-kitchen-2', units:[
-      {id:'u1', type:'bait', label:'Bait box BB-01', barcode:'BB-001-SND'},
-      {id:'u2', type:'bait', label:'Bait box BB-02', barcode:'BB-002-SND'},
-      {id:'u3', type:'fly', label:'Fly unit FU-01', barcode:'FU-001-SND'},
-    ]},
-    {id:'l2', name:'Basement parking', icon:'ti-car', units:[
-      {id:'u4', type:'bait', label:'Bait box BB-03', barcode:'BB-003-SND'},
-      {id:'u5', type:'bait', label:'Bait box BB-04', barcode:'BB-004-SND'},
-    ]},
-    {id:'l3', name:'Loading bay', icon:'ti-truck', units:[
-      {id:'u6', type:'bait', label:'Bait box BB-05', barcode:'BB-005-SND'},
-      {id:'u7', type:'fly', label:'Fly unit FU-02', barcode:'FU-002-SND'},
-    ]},
-  ]},
-  {id:'s2', name:'Rosebank Mall', address:'Rosebank, Johannesburg', locations:[
-    {id:'l4', name:'Food court', icon:'ti-tools-kitchen-2', units:[
-      {id:'u8', type:'bait', label:'Bait box BB-01', barcode:'BB-001-RSB'},
-      {id:'u9', type:'fly', label:'Fly unit FU-01', barcode:'FU-001-RSB'},
-    ]},
-    {id:'l5', name:'Refuse area', icon:'ti-trash', units:[
-      {id:'u11', type:'bait', label:'Bait box BB-02', barcode:'BB-002-RSB'},
-    ]},
-  ]},
-];
-
-const app = {
-  tech: null,
-  site: null,
-  location: null,
-  unit: null,
-  online: navigator.onLine,
-  get records() { return ls(DB_KEY.records) || []; },
-  set records(v) { lsSave(DB_KEY.records, v); },
-  get pending() { return ls(DB_KEY.pending) || []; },
-  set pending(v) { lsSave(DB_KEY.pending, v); },
-  get sites() { return ls(DB_KEY.sites) || DEFAULT_SITES; },
-  set sites(v) { lsSave(DB_KEY.sites, v); },
-  get techs() { return ls(DB_KEY.techs) || DEFAULT_TECHS; },
-  set techs(v) { lsSave(DB_KEY.techs, v); },
-  get config() { return ls(DB_KEY.config) || {url:'', key:''}; },
-  set config(v) { lsSave(DB_KEY.config, v); },
-};
-
-window.addEventListener('online', () => { app.online = true; updateConn(); autoSync(); });
+const app = { tech: null, site: null, location: null, unit: null, online: navigator.onLine };
+window.addEventListener('online',  () => { app.online = true;  updateConn(); autoSync(); });
 window.addEventListener('offline', () => { app.online = false; updateConn(); });
 
-// ══════════════════════════════════════════════
-// NAVIGATION
-// ══════════════════════════════════════════════
+// ── SUPABASE HELPERS ─────────────────────────────────────────────────────────
+async function sbFetch(path, opts = {}) {
+  const res = await fetch(DB.url + '/rest/v1/' + path, {
+    ...opts,
+    headers: {
+      'Content-Type': 'application/json',
+      'apikey': DB.anonKey,
+      'Authorization': `Bearer ${DB.anonKey}`,
+      ...(opts.headers || {}),
+    },
+  });
+  if (!res.ok) throw new Error(await res.text());
+  if (res.status === 204) return null;
+  return res.json();
+}
 
+async function loadRemoteData() {
+  if (!DB.url || !DB.anonKey) {
+    document.getElementById('setup-warning').style.display = 'block';
+    showTechsFromCache();
+    return;
+  }
+  try {
+    // Fetch sites + locations + units joined
+    const [sites, locations, units, techs] = await Promise.all([
+      sbFetch('pt_sites?select=*&order=name'),
+      sbFetch('pt_locations?select=*&order=name'),
+      sbFetch('pt_units?select=*&order=label'),
+      sbFetch('pt_technicians?select=*&order=name'),
+    ]);
+    // Nest locations into sites, units into locations
+    const locMap = {};
+    locations.forEach(l => { locMap[l.id] = { ...l, units: [] }; });
+    units.forEach(u => { if (locMap[u.location_id]) locMap[u.location_id].units.push(u); });
+    const builtSites = sites.map(s => ({
+      ...s,
+      locations: locations.filter(l => l.site_id === s.id).map(l => locMap[l.id]),
+    }));
+    DB.cachedSites = builtSites;
+    DB.cachedTechs = techs;
+    showTechsFromCache();
+  } catch (e) {
+    console.warn('Remote load failed, using cache:', e.message);
+    showTechsFromCache();
+  }
+}
+
+function showTechsFromCache() {
+  document.getElementById('loading-techs').style.display = 'none';
+  const techs = DB.cachedTechs;
+  if (!techs || !techs.length) {
+    if (!DB.url) { document.getElementById('setup-warning').style.display = 'block'; return; }
+    // Show manual entry only
+    document.getElementById('custom-name-card').style.display = 'block';
+    document.getElementById('start-btn').style.display = 'flex';
+    return;
+  }
+  document.getElementById('techs-label').style.display = 'block';
+  document.getElementById('custom-name-card').style.display = 'block';
+  document.getElementById('start-btn').style.display = 'flex';
+  renderTechs(techs);
+}
+
+// ── NAVIGATION ───────────────────────────────────────────────────────────────
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
@@ -489,59 +302,47 @@ function showScreen(id) {
 function updateConn() {
   const b = document.getElementById('conn-badge');
   if (!b) return;
-  if (app.online) {
-    b.className = 'conn-pill online';
-    b.innerHTML = '<i class="ti ti-wifi" style="font-size:13px"></i> Online';
-  } else {
-    b.className = 'conn-pill';
-    b.innerHTML = '<i class="ti ti-wifi-off" style="font-size:13px"></i> Offline';
-  }
+  b.className = app.online ? 'conn-pill online' : 'conn-pill';
+  b.innerHTML = app.online
+    ? '<i class="ti ti-wifi" style="font-size:13px"></i> Online'
+    : '<i class="ti ti-wifi-off" style="font-size:13px"></i> Offline';
   updateSyncBanner();
 }
 
-// ══════════════════════════════════════════════
-// TOAST
-// ══════════════════════════════════════════════
-
-let toastTimer;
+// ── TOAST ────────────────────────────────────────────────────────────────────
+let _tt;
 function toast(msg, type = '') {
   const el = document.getElementById('toast');
   el.textContent = msg;
   el.className = 'show' + (type ? ' ' + type : '');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => el.className = '', 2800);
+  clearTimeout(_tt);
+  _tt = setTimeout(() => el.className = '', 2800);
 }
 
-// ══════════════════════════════════════════════
-// MODALS
-// ══════════════════════════════════════════════
-
-function openModal(id) { document.getElementById(id).classList.add('open'); }
+function openModal(id)  { document.getElementById(id).classList.add('open'); }
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-backdrop').forEach(m =>
+  m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); })
+);
 
-// Close modal on backdrop click
-document.querySelectorAll('.modal-backdrop').forEach(m => {
-  m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); });
-});
-
-// ══════════════════════════════════════════════
-// LOGIN
-// ══════════════════════════════════════════════
-
-function renderTechs() {
+// ── LOGIN ────────────────────────────────────────────────────────────────────
+function renderTechs(techs) {
   const grid = document.getElementById('tech-grid');
-  grid.innerHTML = app.techs.slice(0,6).map(t => `
-    <div class="tech-tile" onclick="selectTech('${t.name}')" id="tb-${t.id}">
-      <div class="tech-avatar">${t.initials}</div>
+  grid.innerHTML = techs.slice(0, 6).map(t => {
+    const initials = t.name.split(' ').map(p => p[0]).slice(0,2).join('').toUpperCase();
+    return `<div class="tech-tile" onclick="selectTech('${t.name}')" id="tb-${t.id}">
+      <div class="tech-avatar">${t.initials || initials}</div>
       <div class="tech-name">${t.name.split(' ')[0]}</div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 }
 
 function selectTech(name) {
   app.tech = name;
   document.querySelectorAll('.tech-tile').forEach(b => b.classList.remove('selected'));
-  const t = app.techs.find(x => x.name === name);
-  if (t) document.getElementById('tb-'+t.id)?.classList.add('selected');
+  const techs = DB.cachedTechs || [];
+  const t = techs.find(x => x.name === name);
+  if (t) document.getElementById('tb-' + t.id)?.classList.add('selected');
   document.getElementById('tech-custom').value = '';
 }
 
@@ -549,45 +350,37 @@ function doLogin() {
   const custom = document.getElementById('tech-custom').value.trim();
   if (custom) app.tech = custom;
   if (!app.tech) { toast('Please select or enter your name', 'error'); return; }
-  const now = new Date();
   document.getElementById('tech-greeting').textContent =
-    app.tech + ' · ' + now.toLocaleDateString('en-ZA', {weekday:'short', day:'numeric', month:'short'});
+    app.tech + ' · ' + new Date().toLocaleDateString('en-ZA', { weekday:'short', day:'numeric', month:'short' });
   renderSites();
   showScreen('screen-sites');
   updateConn();
 }
 
-// ══════════════════════════════════════════════
-// HELPERS
-// ══════════════════════════════════════════════
+function signOut() { app.tech = null; document.querySelectorAll('.tech-tile').forEach(b => b.classList.remove('selected')); showScreen('screen-login'); }
 
-function todayKey() { return new Date().toISOString().slice(0,10); }
-function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
+// ── HELPERS ──────────────────────────────────────────────────────────────────
+function todayKey() { return new Date().toISOString().slice(0, 10); }
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+function getRecord(unitId) { return DB.records.find(r => r.unit_id === unitId && r.tech_date === todayKey()); }
 
-function getRecord(unitId) {
-  return app.records.find(r => r.unitId === unitId && r.techDate === todayKey());
-}
-
-// ══════════════════════════════════════════════
-// SITES
-// ══════════════════════════════════════════════
-
+// ── SITES ────────────────────────────────────────────────────────────────────
 function renderSites() {
   const list = document.getElementById('site-list');
-  const sites = app.sites;
+  const sites = DB.cachedSites || [];
   if (!sites.length) {
-    list.innerHTML = '<div class="empty"><i class="ti ti-building-skyscraper"></i><p>No sites yet. Add one in Admin.</p></div>';
+    list.innerHTML = '<div class="empty"><i class="ti ti-building-skyscraper"></i><p>No sites loaded. Check connection.</p></div>';
     return;
   }
   list.innerHTML = sites.map(site => {
-    const total = site.locations.reduce((a,l) => a + l.units.length, 0);
-    const done = site.locations.reduce((a,l) => a + l.units.filter(u => getRecord(u.id)).length, 0);
-    const pct = total ? Math.round((done/total)*100) : 0;
+    const total = (site.locations || []).reduce((a, l) => a + (l.units || []).length, 0);
+    const done  = (site.locations || []).reduce((a, l) => a + (l.units || []).filter(u => getRecord(u.id)).length, 0);
+    const pct   = total ? Math.round((done / total) * 100) : 0;
     return `<div class="list-row" onclick="selectSite('${site.id}')">
       <div class="row-icon purple"><i class="ti ti-building-skyscraper"></i></div>
       <div class="row-meta">
         <div class="row-name">${site.name}</div>
-        <div class="row-sub">${site.address} &middot; ${done}/${total} done</div>
+        <div class="row-sub">${site.address || ''} · ${done}/${total} done</div>
         <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
       </div>
       <i class="ti ti-chevron-right" style="font-size:16px;color:var(--text3)"></i>
@@ -595,31 +388,24 @@ function renderSites() {
   }).join('');
 }
 
-function selectSite(siteId) {
-  app.site = app.sites.find(s => s.id === siteId);
+function selectSite(id) {
+  app.site = (DB.cachedSites || []).find(s => s.id === id);
   document.getElementById('loc-title').textContent = app.site.name;
-  document.getElementById('loc-site-label').textContent = app.site.address;
+  document.getElementById('loc-site-label').textContent = app.site.address || '';
   renderLocations();
   showScreen('screen-locations');
 }
 
-// ══════════════════════════════════════════════
-// LOCATIONS
-// ══════════════════════════════════════════════
-
+// ── LOCATIONS ────────────────────────────────────────────────────────────────
 function renderLocations() {
   const list = document.getElementById('location-list');
-  const locs = app.site.locations;
-  if (!locs.length) {
-    list.innerHTML = '<div class="empty"><i class="ti ti-map-pin"></i><p>No locations yet.</p></div>';
-    return;
-  }
+  const locs = app.site.locations || [];
   list.innerHTML = locs.map(loc => {
-    const done = loc.units.filter(u => getRecord(u.id)).length;
-    const total = loc.units.length;
-    const pct = total ? Math.round((done/total)*100) : 0;
+    const done  = (loc.units || []).filter(u => getRecord(u.id)).length;
+    const total = (loc.units || []).length;
+    const pct   = total ? Math.round((done / total) * 100) : 0;
     return `<div class="list-row" onclick="selectLocation('${loc.id}')">
-      <div class="row-icon green"><i class="ti ${loc.icon}"></i></div>
+      <div class="row-icon green"><i class="ti ${loc.icon || 'ti-map-pin'}"></i></div>
       <div class="row-meta">
         <div class="row-name">${loc.name}</div>
         <div class="row-sub">${done}/${total} units inspected</div>
@@ -627,364 +413,226 @@ function renderLocations() {
       </div>
       <i class="ti ti-chevron-right" style="font-size:16px;color:var(--text3)"></i>
     </div>`;
-  }).join('');
+  }).join('') || '<div class="empty"><i class="ti ti-map-pin"></i><p>No locations.</p></div>';
 }
 
-function selectLocation(locId) {
-  app.location = app.site.locations.find(l => l.id === locId);
+function selectLocation(id) {
+  app.location = (app.site.locations || []).find(l => l.id === id);
   document.getElementById('units-title').textContent = app.location.name;
   renderUnits();
   showScreen('screen-units');
 }
 
-// ══════════════════════════════════════════════
-// UNITS
-// ══════════════════════════════════════════════
-
+// ── UNITS ────────────────────────────────────────────────────────────────────
 function renderUnits() {
-  const list = document.getElementById('unit-list');
-  const units = app.location.units;
-  const done = units.filter(u => getRecord(u.id)).length;
+  const list  = document.getElementById('unit-list');
+  const units = app.location.units || [];
+  const done  = units.filter(u => getRecord(u.id)).length;
   document.getElementById('units-count').textContent = done + '/' + units.length;
-  if (!units.length) {
-    list.innerHTML = '<div class="empty"><i class="ti ti-box"></i><p>No units in this location.</p></div>';
-    return;
-  }
   list.innerHTML = units.map(u => {
     const rec = getRecord(u.id);
     return `<div class="list-row" onclick="selectUnit('${u.id}')">
-      <div class="row-icon ${u.type === 'bait' ? 'green' : 'blue'}">
-        <i class="ti ${u.type === 'bait' ? 'ti-box' : 'ti-zap'}"></i>
+      <div class="row-icon ${u.unit_type === 'bait' ? 'green' : 'blue'}">
+        <i class="ti ${u.unit_type === 'bait' ? 'ti-box' : 'ti-zap'}"></i>
       </div>
       <div class="row-meta">
         <div class="row-name" style="display:flex;align-items:center;gap:6px">
           ${u.label}
-          <span class="type-pill ${u.type}">${u.type === 'bait' ? 'Bait' : 'Fly'}</span>
+          <span class="type-pill ${u.unit_type}">${u.unit_type === 'bait' ? 'Bait' : 'Fly'}</span>
         </div>
         <div class="row-sub">${u.barcode}${rec ? ' · ' + rec.condition : ''}</div>
       </div>
       <div class="dot ${rec ? 'done' : 'pending'}"></div>
     </div>`;
-  }).join('');
+  }).join('') || '<div class="empty"><i class="ti ti-box"></i><p>No units here.</p></div>';
 }
 
-function selectUnit(unitId) {
-  app.unit = app.location.units.find(u => u.id === unitId);
+function selectUnit(id) {
+  app.unit = (app.location.units || []).find(u => u.id === id);
   renderInspectForm();
   showScreen('screen-inspect');
 }
 
-// ══════════════════════════════════════════════
-// BARCODE SCANNER
-// ══════════════════════════════════════════════
+// ── SCANNER ───────────────────────────────────────────────────────────────────
+let codeReader = null, scanActive = false;
 
-let codeReader = null;
-let scannerActive = false;
-
-function startScanner(targetInputId, resultId) {
-  if (scannerActive) { stopScanner(); return; }
-
-  const videoEl = document.getElementById('scanner-video');
-  const overlayEl = document.getElementById('scanner-overlay');
-  if (!videoEl) return;
-
-  // Try native BarcodeDetector first
+function startScanner() {
+  if (scanActive) { stopScanner(); return; }
+  const vid = document.getElementById('sv');
+  const ov  = document.getElementById('so');
+  if (!vid) return;
   if ('BarcodeDetector' in window) {
-    startNativeScanner(targetInputId, resultId);
-    return;
-  }
-
-  // Fallback to ZXing
-  if (typeof ZXing === 'undefined') {
-    toast('Scanner library not loaded', 'error');
-    return;
-  }
-
-  try {
-    codeReader = new ZXing.BrowserMultiFormatReader();
-    videoEl.classList.add('active');
-    overlayEl.style.display = 'flex';
-    scannerActive = true;
-
-    codeReader.decodeFromConstraints(
-      { video: { facingMode: 'environment' } },
-      videoEl,
-      (result, err) => {
-        if (result) {
-          const code = result.getText();
-          document.getElementById(targetInputId).value = code;
-          if (resultId) {
-            document.getElementById(resultId).textContent = code;
-            document.getElementById(resultId + '-ok').style.display = 'inline';
-          }
-          toast('Scanned: ' + code, 'success');
-          stopScanner();
-        }
-      }
-    );
-  } catch(e) {
-    toast('Camera not available', 'error');
-  }
-}
-
-function startNativeScanner(targetInputId, resultId) {
-  const videoEl = document.getElementById('scanner-video');
-  const overlayEl = document.getElementById('scanner-overlay');
-  navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
-    .then(stream => {
-      videoEl.srcObject = stream;
-      videoEl.play();
-      videoEl.classList.add('active');
-      overlayEl.style.display = 'flex';
-      scannerActive = true;
-
-      const detector = new BarcodeDetector({ formats: ['code_128','code_39','ean_13','ean_8','qr_code','data_matrix'] });
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } }).then(stream => {
+      vid.srcObject = stream; vid.play(); vid.classList.add('active'); ov.style.display = 'flex'; scanActive = true;
+      const det = new BarcodeDetector({ formats: ['code_128','code_39','ean_13','ean_8','qr_code','data_matrix'] });
       const tick = () => {
-        if (!scannerActive) return;
-        detector.detect(videoEl).then(codes => {
-          if (codes.length > 0) {
-            const code = codes[0].rawValue;
-            document.getElementById(targetInputId).value = code;
-            if (resultId) {
-              document.getElementById(resultId).textContent = code;
-              document.getElementById(resultId + '-ok').style.display = 'inline';
-            }
-            toast('Scanned: ' + code, 'success');
-            stopScanner();
-            return;
-          }
+        if (!scanActive) return;
+        det.detect(vid).then(codes => {
+          if (codes.length) { applyScan(codes[0].rawValue); return; }
           requestAnimationFrame(tick);
         }).catch(() => requestAnimationFrame(tick));
       };
       requestAnimationFrame(tick);
-    })
-    .catch(() => toast('Camera permission denied', 'error'));
-}
-
-function stopScanner() {
-  if (!scannerActive) return;
-  scannerActive = false;
-  const videoEl = document.getElementById('scanner-video');
-  if (videoEl) {
-    videoEl.classList.remove('active');
-    if (videoEl.srcObject) {
-      videoEl.srcObject.getTracks().forEach(t => t.stop());
-      videoEl.srcObject = null;
-    }
+    }).catch(() => toast('Camera permission denied', 'error'));
+    return;
   }
-  const overlayEl = document.getElementById('scanner-overlay');
-  if (overlayEl) overlayEl.style.display = 'none';
-  if (codeReader) { try { codeReader.reset(); } catch(e){} codeReader = null; }
-}
-
-// ══════════════════════════════════════════════
-// INSPECT FORM
-// ══════════════════════════════════════════════
-
-const BAIT_OPTIONS = ['None','Bblox','Contrac','Fastrac','Brodifacoum','Talon'];
-const CONDITION_OPTIONS = ['Good','Damaged','Tampered','Missing'];
-
-const _chipState = {};
-
-function setChip(group, val) {
-  _chipState[group] = val;
-  document.querySelectorAll(`[data-cg="${group}"] .chip`).forEach(b => {
-    b.classList.toggle('active', b.dataset.val === val);
+  if (typeof ZXing === 'undefined') { toast('Scanner not available', 'error'); return; }
+  codeReader = new ZXing.BrowserMultiFormatReader();
+  vid.classList.add('active'); ov.style.display = 'flex'; scanActive = true;
+  codeReader.decodeFromConstraints({ video: { facingMode: 'environment' } }, vid, (result) => {
+    if (result) applyScan(result.getText());
   });
 }
 
+function applyScan(code) {
+  document.getElementById('f-barcode').value = code;
+  document.getElementById('scan-code').textContent = code;
+  document.getElementById('scan-ok').style.display = 'inline';
+  toast('Scanned: ' + code, 'success');
+  stopScanner();
+}
+
+function stopScanner() {
+  if (!scanActive) return; scanActive = false;
+  const vid = document.getElementById('sv');
+  if (vid) { vid.classList.remove('active'); if (vid.srcObject) { vid.srcObject.getTracks().forEach(t => t.stop()); vid.srcObject = null; } }
+  const ov = document.getElementById('so');
+  if (ov) ov.style.display = 'none';
+  if (codeReader) { try { codeReader.reset(); } catch(e){} codeReader = null; }
+}
+
+// ── INSPECT FORM ──────────────────────────────────────────────────────────────
+const BAIT_OPTS = ['None','Bblox','Contrac','Fastrac','Brodifacoum','Talon'];
+const COND_OPTS = ['Good','Damaged','Tampered','Missing'];
+const _cs = {};
+
+function setChip(g, v) {
+  _cs[g] = v;
+  document.querySelectorAll(`[data-cg="${g}"] .chip`).forEach(b => b.classList.toggle('active', b.dataset.val === v));
+}
+
 function renderInspectForm() {
-  const u = app.unit;
+  const u   = app.unit;
   const rec = getRecord(u.id) || {};
   document.getElementById('inspect-title').textContent = u.label;
+  _cs['inspected'] = rec.inspected || '';
+  _cs['condition'] = rec.condition || '';
+  _cs['bait']      = rec.bait_applied || '';
 
-  _chipState['inspected'] = rec.inspected || '';
-  _chipState['condition'] = rec.condition || '';
-  _chipState['bait'] = rec.baitApplied || '';
-
-  const baitFields = u.type === 'bait' ? `
-    <div class="card">
-      <div class="card-label">Bait applied</div>
-      <div class="chip-group" data-cg="bait">
-        ${BAIT_OPTIONS.map(b => `<button class="chip${rec.baitApplied===b?' active':''}" data-val="${b}" onclick="setChip('bait','${b}')">${b}</button>`).join('')}
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-label">Batch number</div>
-      <input type="text" id="f-batch" placeholder="e.g. BT-2024-0091" value="${rec.batchNumber||''}" autocomplete="off">
-    </div>` : `
-    <div class="card">
-      <div class="card-label">Catch count (insects)</div>
-      <input type="number" id="f-catch" placeholder="0" min="0" value="${rec.catchCount||''}">
-    </div>`;
+  const extra = u.unit_type === 'bait'
+    ? `<div class="card"><div class="card-label">Bait applied</div><div class="chip-group" data-cg="bait">
+        ${BAIT_OPTS.map(b => `<button class="chip${rec.bait_applied===b?' active':''}" data-val="${b}" onclick="setChip('bait','${b}')">${b}</button>`).join('')}
+       </div></div>
+       <div class="card"><div class="card-label">Batch number</div>
+        <input type="text" id="f-batch" placeholder="e.g. BT-2024-0091" value="${rec.batch_number||''}" autocomplete="off">
+       </div>`
+    : `<div class="card"><div class="card-label">Catch count</div>
+        <input type="number" id="f-catch" placeholder="0" min="0" value="${rec.catch_count||''}">
+       </div>`;
 
   document.getElementById('inspect-body').innerHTML = `
     <div class="card" style="background:var(--surface2);border-color:transparent">
       <div style="display:flex;align-items:center;gap:12px">
-        <div class="row-icon ${u.type==='bait'?'green':'blue'}" style="width:46px;height:46px">
-          <i class="ti ${u.type==='bait'?'ti-box':'ti-zap'}" style="font-size:22px"></i>
+        <div class="row-icon ${u.unit_type==='bait'?'green':'blue'}" style="width:46px;height:46px;font-size:22px">
+          <i class="ti ${u.unit_type==='bait'?'ti-box':'ti-zap'}"></i>
         </div>
         <div>
           <div style="font-size:15px;font-weight:600">${u.label}</div>
-          <div style="font-size:12px;color:var(--text3)">${u.type==='bait'?'Bait box':'Fly unit'} · ${app.location.name} · ${app.site.name}</div>
+          <div style="font-size:12px;color:var(--text3)">${u.unit_type==='bait'?'Bait box':'Fly unit'} · ${app.location.name} · ${app.site.name}</div>
         </div>
       </div>
     </div>
-
     <div class="card">
       <div class="card-label">Barcode scan</div>
-      <div class="scan-zone" id="scan-zone" onclick="startScanner('f-barcode','scan-code')">
-        <video id="scanner-video" playsinline muted></video>
-        <div class="scan-overlay" id="scanner-overlay" style="display:flex">
+      <div class="scan-zone" onclick="startScanner()">
+        <video id="sv" playsinline muted></video>
+        <div class="scan-overlay" id="so" style="display:flex">
           <div class="scan-frame"><div class="scan-line"></div></div>
           <div class="scan-hint">Tap to activate camera scanner</div>
         </div>
       </div>
-      <div class="scan-result-bar" style="margin-top:8px">
+      <div class="scan-result-bar">
         <i class="ti ti-barcode" style="font-size:18px;color:var(--text3)"></i>
-        <span class="scan-result-code" id="scan-code">${rec.scannedBarcode||'No barcode scanned yet'}</span>
-        <i class="ti ti-circle-check scan-result-ok" id="scan-code-ok" style="display:${rec.scannedBarcode?'inline':'none'}"></i>
+        <span class="scan-code" id="scan-code">${rec.scanned_barcode||'Not scanned yet'}</span>
+        <i class="ti ti-circle-check" id="scan-ok" style="color:var(--success);display:${rec.scanned_barcode?'inline':'none'}"></i>
       </div>
-      <input type="text" id="f-barcode" placeholder="Or type barcode manually" value="${rec.scannedBarcode||''}"
-        style="margin-top:8px" oninput="document.getElementById('scan-code').textContent=this.value||'No barcode scanned yet'">
+      <input type="text" id="f-barcode" placeholder="Or type barcode manually" value="${rec.scanned_barcode||''}"
+        style="margin-top:8px" oninput="document.getElementById('scan-code').textContent=this.value||'Not scanned yet'">
     </div>
-
-    <div class="card">
-      <div class="card-label">Inspected?</div>
-      <div class="chip-group" data-cg="inspected">
-        ${['Yes','No - inaccessible','No - missing'].map(v =>
-          `<button class="chip${rec.inspected===v?' active':''}" data-val="${v}" onclick="setChip('inspected','${v}')">${v}</button>`
-        ).join('')}
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-label">Condition</div>
-      <div class="chip-group" data-cg="condition">
-        ${CONDITION_OPTIONS.map(c =>
-          `<button class="chip${c==='Damaged'||c==='Tampered'?' danger':''} ${rec.condition===c?' active':''}" data-val="${c}" onclick="setChip('condition','${c}')">${c}</button>`
-        ).join('')}
-      </div>
-    </div>
-
-    ${baitFields}
-
-    <div class="card">
-      <div class="card-label">Notes</div>
+    <div class="card"><div class="card-label">Inspected?</div><div class="chip-group" data-cg="inspected">
+      ${['Yes','No - inaccessible','No - missing'].map(v=>`<button class="chip${rec.inspected===v?' active':''}" data-val="${v}" onclick="setChip('inspected','${v}')">${v}</button>`).join('')}
+    </div></div>
+    <div class="card"><div class="card-label">Condition</div><div class="chip-group" data-cg="condition">
+      ${COND_OPTS.map(c=>`<button class="chip${['Damaged','Tampered'].includes(c)?' danger':''} ${rec.condition===c?' active':''}" data-val="${c}" onclick="setChip('condition','${c}')">${c}</button>`).join('')}
+    </div></div>
+    ${extra}
+    <div class="card"><div class="card-label">Notes</div>
       <textarea id="f-notes" rows="2" placeholder="Optional observations…">${rec.notes||''}</textarea>
     </div>
-
-    <button class="btn btn-primary" onclick="saveRecord()">
-      <i class="ti ti-device-floppy"></i> Save inspection
-    </button>
-    ${rec.unitId ? `<button class="btn btn-danger" onclick="clearRecord()" style="margin-top:8px">
-      <i class="ti ti-trash"></i> Clear this record</button>` : ''}
-    <div style="height:20px"></div>
-  `;
+    <button class="btn btn-primary" onclick="saveRecord()"><i class="ti ti-device-floppy"></i> Save inspection</button>
+    ${rec.unit_id?`<button class="btn btn-danger" onclick="clearRecord()" style="margin-top:8px"><i class="ti ti-trash"></i> Clear record</button>`:''}
+    <div style="height:20px"></div>`;
 }
 
-// ══════════════════════════════════════════════
-// SAVE / CLEAR RECORD
-// ══════════════════════════════════════════════
-
+// ── SAVE / CLEAR ──────────────────────────────────────────────────────────────
 function saveRecord() {
-  const u = app.unit;
-  const barcode = document.getElementById('f-barcode').value.trim();
-  const inspected = _chipState['inspected'];
-  const condition = _chipState['condition'];
-
-  if (!barcode) { toast('Please scan or enter the barcode', 'error'); return; }
+  const u        = app.unit;
+  const barcode  = document.getElementById('f-barcode').value.trim();
+  const inspected = _cs['inspected'];
+  const condition = _cs['condition'];
+  if (!barcode)   { toast('Please scan or enter the barcode', 'error'); return; }
   if (!inspected) { toast('Please mark whether unit was inspected', 'error'); return; }
   if (!condition) { toast('Please select the unit condition', 'error'); return; }
 
   const record = {
-    id: uid(),
-    unitId: u.id,
-    unitLabel: u.label,
-    unitType: u.type,
-    expectedBarcode: u.barcode,
-    scannedBarcode: barcode,
-    barcodeMatch: barcode === u.barcode,
-    siteId: app.site.id,
-    siteName: app.site.name,
-    locationId: app.location.id,
-    locationName: app.location.name,
-    tech: app.tech,
-    techDate: todayKey(),
-    timestamp: new Date().toISOString(),
-    inspected,
-    condition,
-    baitApplied: _chipState['bait'] || '',
-    batchNumber: document.getElementById('f-batch')?.value?.trim() || '',
-    catchCount: document.getElementById('f-catch')?.value || '',
+    id: uid(), unit_id: u.id, unit_label: u.label, unit_type: u.unit_type,
+    expected_barcode: u.barcode, scanned_barcode: barcode,
+    barcode_match: barcode === u.barcode,
+    site_id: app.site.id, site_name: app.site.name,
+    location_id: app.location.id, location_name: app.location.name,
+    tech: app.tech, tech_date: todayKey(), timestamp: new Date().toISOString(),
+    inspected, condition,
+    bait_applied: _cs['bait'] || '',
+    batch_number: document.getElementById('f-batch')?.value?.trim() || '',
+    catch_count:  parseInt(document.getElementById('f-catch')?.value || '0') || null,
     notes: document.getElementById('f-notes').value.trim(),
     synced: false,
   };
 
-  const records = app.records.filter(r => !(r.unitId === u.id && r.techDate === todayKey()));
-  records.push(record);
-  app.records = records;
+  DB.records = [...DB.records.filter(r => !(r.unit_id === u.id && r.tech_date === todayKey())), record];
+  DB.pending = [...DB.pending.filter(r => !(r.unit_id === u.id && r.tech_date === todayKey())), record];
 
-  const pending = app.pending.filter(r => !(r.unitId === u.id && r.techDate === todayKey()));
-  pending.push(record);
-  app.pending = pending;
-
-  if (!record.barcodeMatch) toast('Warning: barcode mismatch!', 'error');
+  if (!record.barcode_match) toast('⚠ Barcode mismatch — check unit', 'error');
   else toast('Saved' + (app.online ? ' — syncing…' : ' offline'), 'success');
 
   if (app.online) autoSync();
-
-  setTimeout(() => {
-    renderUnits();
-    renderLocations();
-    renderSites();
-    showScreen('screen-units');
-  }, 900);
+  setTimeout(() => { renderUnits(); renderLocations(); renderSites(); showScreen('screen-units'); }, 900);
 }
 
 function clearRecord() {
   const u = app.unit;
-  app.records = app.records.filter(r => !(r.unitId === u.id && r.techDate === todayKey()));
-  app.pending = app.pending.filter(r => !(r.unitId === u.id && r.techDate === todayKey()));
+  DB.records = DB.records.filter(r => !(r.unit_id === u.id && r.tech_date === todayKey()));
+  DB.pending = DB.pending.filter(r => !(r.unit_id === u.id && r.tech_date === todayKey()));
   toast('Record cleared');
   renderUnits();
   showScreen('screen-units');
 }
 
-// ══════════════════════════════════════════════
-// SUPABASE SYNC
-// ══════════════════════════════════════════════
-
-async function supabaseInsert(records) {
-  const cfg = app.config;
-  if (!cfg.url || !cfg.key) throw new Error('Supabase not configured');
-  const res = await fetch(`${cfg.url}/rest/v1/pest_inspections`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'apikey': cfg.key,
-      'Authorization': `Bearer ${cfg.key}`,
-      'Prefer': 'return=minimal',
-    },
-    body: JSON.stringify(records),
-  });
-  if (!res.ok) {
-    const err = await res.text();
-    throw new Error('Supabase error ' + res.status + ': ' + err);
-  }
-}
-
+// ── SYNC ──────────────────────────────────────────────────────────────────────
 async function autoSync() {
-  if (!app.online || !app.pending.length) return;
-  const pending = app.pending;
+  if (!app.online || !DB.pending.length || !DB.url || !DB.anonKey) return;
+  const batch = DB.pending;
   try {
-    await supabaseInsert(pending);
-    const syncedIds = new Set(pending.map(r => r.id));
-    const records = app.records.map(r => syncedIds.has(r.id) ? {...r, synced: true} : r);
-    app.records = records;
-    app.pending = [];
+    await sbFetch('pest_inspections', {
+      method: 'POST',
+      headers: { 'Prefer': 'return=minimal' },
+      body: JSON.stringify(batch),
+    });
+    const ids = new Set(batch.map(r => r.id));
+    DB.records = DB.records.map(r => ids.has(r.id) ? { ...r, synced: true } : r);
+    DB.pending  = [];
     updateSyncBanner();
-    toast(pending.length + ' record' + (pending.length > 1 ? 's' : '') + ' synced', 'success');
+    toast(batch.length + ' record' + (batch.length > 1 ? 's' : '') + ' synced', 'success');
   } catch(e) {
     console.warn('Sync failed:', e.message);
     updateSyncBanner();
@@ -993,323 +641,38 @@ async function autoSync() {
 
 async function doSync() {
   if (!app.online) { toast('No connection', 'error'); return; }
-  const cfg = app.config;
-  if (!cfg.url || !cfg.key) { toast('Supabase not configured — go to Admin', 'error'); return; }
   await autoSync();
 }
 
 function updateSyncBanner() {
-  const banner = document.getElementById('sync-banner');
-  const txt = document.getElementById('sync-text');
-  if (!banner) return;
-  const n = app.pending.length;
-  if (n > 0) {
-    banner.style.display = 'flex';
-    txt.textContent = n + ' record' + (n > 1 ? 's' : '') + ' pending sync';
-  } else {
-    banner.style.display = 'none';
-  }
+  const n = DB.pending.length;
+  const el = document.getElementById('sync-banner');
+  if (!el) return;
+  el.style.display = n > 0 ? 'flex' : 'none';
+  document.getElementById('sync-text').textContent = n + ' record' + (n > 1 ? 's' : '') + ' pending sync';
 }
 
-// ══════════════════════════════════════════════
-// ADMIN — CONFIG
-// ══════════════════════════════════════════════
-
-function openAdmin() {
-  const cfg = app.config;
-  document.getElementById('cfg-url').value = cfg.url || '';
-  document.getElementById('cfg-key').value = cfg.key || '';
-  renderAdminSites();
-  renderAdminTechs();
-  updateExportCount();
-  showScreen('screen-admin');
-}
-
-function saveConfig() {
-  app.config = {
-    url: document.getElementById('cfg-url').value.trim(),
-    key: document.getElementById('cfg-key').value.trim(),
-  };
-  toast('Configuration saved', 'success');
-}
-
-async function testConnection() {
-  const cfg = app.config;
-  if (!cfg.url || !cfg.key) { toast('Enter URL and key first', 'error'); return; }
-  try {
-    const res = await fetch(`${cfg.url}/rest/v1/pest_inspections?limit=1`, {
-      headers: { 'apikey': cfg.key, 'Authorization': `Bearer ${cfg.key}` }
-    });
-    if (res.ok) toast('Connection successful!', 'success');
-    else toast('Error ' + res.status + ' — check credentials', 'error');
-  } catch(e) {
-    toast('Connection failed: ' + e.message, 'error');
-  }
-}
-
-// ══════════════════════════════════════════════
-// ADMIN — TABS
-// ══════════════════════════════════════════════
-
-function switchTab(tabId) {
-  document.querySelectorAll('.tab').forEach((t, i) => {
-    const panels = document.querySelectorAll('.tab-panel');
-    t.classList.toggle('active', 'tab-' + ['config','sites','techs','export'][i] === tabId);
-    panels[i]?.classList.toggle('active', 'tab-' + ['config','sites','techs','export'][i] === tabId);
-  });
-  if (tabId === 'tab-export') updateExportCount();
-}
-
-// ══════════════════════════════════════════════
-// ADMIN — SITES
-// ══════════════════════════════════════════════
-
-let _editingSiteId = null;
-let _editingLocId = null;
-
-function renderAdminSites() {
-  const list = document.getElementById('admin-site-list');
-  list.innerHTML = app.sites.map(site => `
-    <div class="card" style="padding:12px 14px">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
-        <div class="row-icon purple" style="width:36px;height:36px;font-size:17px">
-          <i class="ti ti-building-skyscraper"></i>
-        </div>
-        <div style="flex:1">
-          <div style="font-size:14px;font-weight:600">${site.name}</div>
-          <div style="font-size:12px;color:var(--text3)">${site.address}</div>
-        </div>
-        <button class="btn btn-sm btn-danger" onclick="deleteSite('${site.id}')" style="width:auto;padding:6px 10px">
-          <i class="ti ti-trash"></i>
-        </button>
-      </div>
-      <div style="padding-left:4px;display:flex;flex-direction:column;gap:6px">
-        ${site.locations.map(loc => `
-          <div style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--surface2);border-radius:var(--radius-sm)">
-            <i class="ti ${loc.icon}" style="color:var(--text3);font-size:16px"></i>
-            <div style="flex:1">
-              <div style="font-size:13px;font-weight:500">${loc.name}</div>
-              <div style="font-size:11px;color:var(--text3)">${loc.units.length} unit${loc.units.length!==1?'s':''}</div>
-            </div>
-            <button class="btn btn-sm btn-ghost" onclick="openAddUnit('${site.id}','${loc.id}')" style="width:auto;padding:5px 10px;font-size:12px">
-              + Unit
-            </button>
-            <button class="btn btn-sm btn-danger" onclick="deleteLocation('${site.id}','${loc.id}')" style="width:auto;padding:5px 8px">
-              <i class="ti ti-x"></i>
-            </button>
-          </div>
-        `).join('')}
-        <button class="btn btn-ghost" onclick="openAddLocation('${site.id}')" style="padding:9px;font-size:13px;margin-top:2px">
-          <i class="ti ti-plus"></i> Add location
-        </button>
-      </div>
-    </div>
-  `).join('') || '<div class="empty"><i class="ti ti-building"></i><p>No sites yet.</p></div>';
-}
-
-function openAddSite() { openModal('modal-add-site'); }
-
-function addSite() {
-  const name = document.getElementById('new-site-name').value.trim();
-  const addr = document.getElementById('new-site-addr').value.trim();
-  if (!name) { toast('Site name required', 'error'); return; }
-  const sites = app.sites;
-  sites.push({ id: uid(), name, address: addr || name, locations: [] });
-  app.sites = sites;
-  closeModal('modal-add-site');
-  document.getElementById('new-site-name').value = '';
-  document.getElementById('new-site-addr').value = '';
-  renderAdminSites();
-  toast('Site added', 'success');
-}
-
-function deleteSite(siteId) {
-  confirmAction('Delete site?', 'This will remove the site and all its locations and units. Saved inspection records are kept.', () => {
-    app.sites = app.sites.filter(s => s.id !== siteId);
-    renderAdminSites();
-    toast('Site deleted');
-  });
-}
-
-function openAddLocation(siteId) {
-  _editingSiteId = siteId;
-  openModal('modal-add-location');
-}
-
-function addLocation() {
-  const name = document.getElementById('new-loc-name').value.trim();
-  const icon = document.getElementById('new-loc-icon').value;
-  if (!name) { toast('Location name required', 'error'); return; }
-  const sites = app.sites;
-  const site = sites.find(s => s.id === _editingSiteId);
-  if (!site) return;
-  site.locations.push({ id: uid(), name, icon, units: [] });
-  app.sites = sites;
-  closeModal('modal-add-location');
-  document.getElementById('new-loc-name').value = '';
-  renderAdminSites();
-  toast('Location added', 'success');
-}
-
-function deleteLocation(siteId, locId) {
-  confirmAction('Delete location?', 'All units in this location will be removed.', () => {
-    const sites = app.sites;
-    const site = sites.find(s => s.id === siteId);
-    if (site) site.locations = site.locations.filter(l => l.id !== locId);
-    app.sites = sites;
-    renderAdminSites();
-    toast('Location deleted');
-  });
-}
-
-function openAddUnit(siteId, locId) {
-  _editingSiteId = siteId;
-  _editingLocId = locId;
-  openModal('modal-add-unit');
-}
-
-function addUnit() {
-  const label = document.getElementById('new-unit-label').value.trim();
-  const barcode = document.getElementById('new-unit-barcode').value.trim();
-  const type = document.getElementById('new-unit-type').value;
-  if (!label || !barcode) { toast('Label and barcode required', 'error'); return; }
-  const sites = app.sites;
-  const site = sites.find(s => s.id === _editingSiteId);
-  if (!site) return;
-  const loc = site.locations.find(l => l.id === _editingLocId);
-  if (!loc) return;
-  loc.units.push({ id: uid(), type, label, barcode });
-  app.sites = sites;
-  closeModal('modal-add-unit');
-  document.getElementById('new-unit-label').value = '';
-  document.getElementById('new-unit-barcode').value = '';
-  renderAdminSites();
-  toast('Unit added', 'success');
-}
-
-// ══════════════════════════════════════════════
-// ADMIN — TECHNICIANS
-// ══════════════════════════════════════════════
-
-function renderAdminTechs() {
-  const list = document.getElementById('admin-tech-list');
-  list.innerHTML = app.techs.map(t => `
-    <div class="card" style="padding:11px 14px;display:flex;align-items:center;gap:12px">
-      <div class="tech-avatar">${t.initials}</div>
-      <div style="flex:1;font-size:14px;font-weight:500">${t.name}</div>
-      <button class="btn btn-sm btn-danger" onclick="deleteTech('${t.id}')" style="width:auto;padding:6px 10px">
-        <i class="ti ti-trash"></i>
-      </button>
-    </div>
-  `).join('') || '<div class="empty"><i class="ti ti-users"></i><p>No technicians.</p></div>';
-}
-
-function addTech() {
-  const name = document.getElementById('new-tech-name').value.trim();
-  if (!name) { toast('Name required', 'error'); return; }
-  const parts = name.split(' ');
-  const initials = parts.map(p => p[0].toUpperCase()).slice(0,2).join('');
-  const techs = app.techs;
-  techs.push({ id: uid(), name, initials });
-  app.techs = techs;
-  document.getElementById('new-tech-name').value = '';
-  renderAdminTechs();
-  renderTechs();
-  toast('Technician added', 'success');
-}
-
-function deleteTech(techId) {
-  app.techs = app.techs.filter(t => t.id !== techId);
-  renderAdminTechs();
-  renderTechs();
-  toast('Technician removed');
-}
-
-// ══════════════════════════════════════════════
-// EXPORT
-// ══════════════════════════════════════════════
-
-function updateExportCount() {
-  const n = app.records.length;
-  document.getElementById('export-count').textContent =
-    n + ' record' + (n !== 1 ? 's' : '') + ' stored locally (' + app.pending.length + ' unsynced)';
-}
-
-function exportCSV() {
-  const records = app.records;
-  if (!records.length) { toast('No records to export', 'error'); return; }
-  const cols = ['timestamp','tech','techDate','siteName','locationName','unitLabel','unitType','expectedBarcode','scannedBarcode','barcodeMatch','inspected','condition','baitApplied','batchNumber','catchCount','notes','synced'];
-  const csv = [cols.join(','), ...records.map(r =>
-    cols.map(c => JSON.stringify(r[c] ?? '')).join(',')
-  )].join('\n');
-  downloadFile('pesttrack_export_' + todayKey() + '.csv', csv, 'text/csv');
-}
-
-function exportJSON() {
-  const records = app.records;
-  if (!records.length) { toast('No records to export', 'error'); return; }
-  downloadFile('pesttrack_export_' + todayKey() + '.json', JSON.stringify(records, null, 2), 'application/json');
-}
-
-function downloadFile(name, content, mime) {
-  const a = document.createElement('a');
-  a.href = 'data:' + mime + ';charset=utf-8,' + encodeURIComponent(content);
-  a.download = name;
-  a.click();
-}
-
-function confirmClearAll() {
-  confirmAction('Clear all data?', 'This will permanently delete all local inspection records. This cannot be undone.', () => {
-    app.records = [];
-    app.pending = [];
-    updateExportCount();
-    updateSyncBanner();
-    toast('All local data cleared');
-  });
-}
-
-// ══════════════════════════════════════════════
-// CONFIRM DIALOG
-// ══════════════════════════════════════════════
-
-let _confirmCallback = null;
+// ── CONFIRM ───────────────────────────────────────────────────────────────────
+let _cb = null;
 function confirmAction(title, body, cb) {
   document.getElementById('confirm-title').textContent = title;
-  document.getElementById('confirm-body').textContent = body;
-  _confirmCallback = cb;
-  openModal('modal-confirm');
+  document.getElementById('confirm-body').textContent  = body;
+  _cb = cb; openModal('modal-confirm');
 }
 document.getElementById('confirm-ok-btn').addEventListener('click', () => {
-  closeModal('modal-confirm');
-  if (_confirmCallback) { _confirmCallback(); _confirmCallback = null; }
+  closeModal('modal-confirm'); if (_cb) { _cb(); _cb = null; }
 });
 
-// ══════════════════════════════════════════════
-// BOOT
-// ══════════════════════════════════════════════
-
-renderTechs();
+// ── BOOT ──────────────────────────────────────────────────────────────────────
 updateConn();
+loadRemoteData();
 
-// ── Service Worker registration ──
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/service-worker.js')
-      .then(reg => {
-        console.log('SW registered:', reg.scope);
-        // Register background sync
-        if ('sync' in reg) {
-          window.addEventListener('online', () => {
-            reg.sync.register('sync-inspections').catch(() => {});
-          });
-        }
-      })
-      .catch(err => console.warn('SW registration failed:', err));
-
-    // Listen for SW sync trigger
-    navigator.serviceWorker.addEventListener('message', event => {
-      if (event.data?.type === 'TRIGGER_SYNC') autoSync();
+    navigator.serviceWorker.register('service-worker.js').then(reg => {
+      if ('sync' in reg) window.addEventListener('online', () => reg.sync.register('sync-inspections').catch(() => {}));
     });
+    navigator.serviceWorker.addEventListener('message', e => { if (e.data?.type === 'TRIGGER_SYNC') autoSync(); });
   });
 }
 </script>
