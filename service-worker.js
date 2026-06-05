@@ -1,6 +1,6 @@
 // PestTrack Service Worker — offline-first caching strategy
-const CACHE_NAME = 'pesttrack-v1';
-const RUNTIME_CACHE = 'pesttrack-runtime-v1';
+const CACHE_NAME = 'pesttrack-v2';
+const RUNTIME_CACHE = 'pesttrack-runtime-v2';
 
 // Files to pre-cache on install (app shell)
 const PRECACHE_URLS = [
@@ -87,3 +87,7 @@ async function syncInspections() {
   const clients = await self.clients.matchAll({ type: 'window' });
   clients.forEach(client => client.postMessage({ type: 'TRIGGER_SYNC' }));
 }
+
+self.addEventListener('message', event => {
+  if (event.data === 'SKIP_WAITING') self.skipWaiting();
+});
