@@ -1,7 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-const PREBAKED_URL = 'https://rmgdywekbtsxinmnxtui.supabase.co';
-const PREBAKED_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJtZ2R5d2VrYnRzeGlubW54dHVpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1NTUzNTYsImV4cCI6MjA5NjEzMTM1Nn0.bXfyArmEfy0_EzMsXM_tfttdBnPDKsFHhisg3a57QyA';
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -208,9 +206,8 @@ textarea{resize:none}
 // ── CONFIG ──────────────────────────────────────────────────────────────────
 // Pre-bake your Supabase URL here when distributing to field devices.
 // Leave blank to require first-run setup (not recommended for field devices).
-const PREBAKED_URL = '';   // e.g. 'https://xxxx.supabase.co'
-const PREBAKED_KEY = '';   // anon/public key only
-
+const PREBAKED_URL = 'https://rmgdywekbtsxinmnxtui.supabase.co';
+const PREBAKED_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9
 const DB = {
   get url()     { return PREBAKED_URL || localStorage.getItem('pt_url') || ''; },
   get anonKey() { return PREBAKED_KEY || localStorage.getItem('pt_anon_key') || ''; },
