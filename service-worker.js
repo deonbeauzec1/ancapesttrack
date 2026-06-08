@@ -1,6 +1,6 @@
 // PestTrack Service Worker — offline-first caching strategy
-const CACHE_NAME = 'pesttrack-v2';
-const RUNTIME_CACHE = 'pesttrack-runtime-v2';
+const CACHE_NAME = 'pesttrack-v3';
+const RUNTIME_CACHE = 'pesttrack-runtime-v3';
 
 // Files to pre-cache on install (app shell)
 const PRECACHE_URLS = [
