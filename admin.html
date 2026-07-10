@@ -6,134 +6,206 @@
 <title>PestTrack Admin</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
-:root{--brand:#0f4c81;--brand-pale:#e8f1fb;--accent:#2dd4a7;--surface:#fff;--surface2:#f5f7fa;--border:rgba(0,0,0,0.09);--border2:rgba(0,0,0,0.14);--text:#111827;--text2:#4b5563;--text3:#9ca3af;--danger:#dc2626;--danger-bg:#fef2f2;--warn:#d97706;--warn-bg:#fffbeb;--success:#059669;--success-bg:#ecfdf5;--radius:10px;--shadow:0 1px 3px rgba(0,0,0,0.08)}
+:root{--brand:#0f4c81;--brand-light:#1a6bbf;--brand-pale:#e8f1fb;--accent:#2dd4a7;--accent-dark:#1aad86;--surface:#fff;--surface2:#f5f7fa;--surface3:#eef1f6;--border:rgba(0,0,0,0.08);--border2:rgba(0,0,0,0.13);--text:#111827;--text2:#4b5563;--text3:#9ca3af;--danger:#dc2626;--danger-bg:#fef2f2;--warn:#d97706;--warn-bg:#fffbeb;--success:#059669;--success-bg:#ecfdf5;--purple:#7c3aed;--purple-bg:#f5f3ff;--radius:10px;--shadow:0 1px 3px rgba(0,0,0,0.07),0 1px 2px rgba(0,0,0,0.04)}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'DM Sans',sans-serif;background:var(--surface2);color:var(--text);font-size:14px;min-height:100vh}
-a{color:inherit;text-decoration:none}
 
-/* ── Auth overlay ── */
-#auth-overlay{position:fixed;inset:0;background:var(--brand);display:flex;align-items:center;justify-content:center;z-index:1000;flex-direction:column;gap:20px}
-.auth-box{background:#fff;border-radius:16px;padding:32px;width:340px;display:flex;flex-direction:column;gap:14px}
+/* AUTH */
+#auth-overlay{position:fixed;inset:0;background:linear-gradient(135deg,#0f4c81 0%,#1a6bbf 100%);display:flex;align-items:center;justify-content:center;z-index:1000}
+.auth-box{background:#fff;border-radius:16px;padding:32px;width:360px;display:flex;flex-direction:column;gap:14px;box-shadow:0 24px 48px rgba(0,0,0,0.2)}
 .auth-logo{display:flex;align-items:center;gap:10px;color:var(--brand);margin-bottom:4px}
 .auth-logo i{font-size:26px}
-.auth-logo span{font-size:20px;font-weight:700}
-.auth-box h2{font-size:17px;font-weight:600;color:var(--text)}
-.auth-box p{font-size:13px;color:var(--text3);margin-top:-6px}
+.auth-logo span{font-size:20px;font-weight:700;letter-spacing:-0.02em}
 
-/* ── Shell ── */
-#shell{display:none;min-height:100vh;flex-direction:column}
+/* SHELL */
+#shell{display:none;height:100vh;flex-direction:column;overflow:hidden}
 #shell.visible{display:flex}
-.topnav{background:var(--brand);color:#fff;padding:0 24px;display:flex;align-items:center;gap:16px;height:58px;flex-shrink:0}
+.topnav{background:var(--brand);color:#fff;padding:0 24px;display:flex;align-items:center;gap:14px;height:56px;flex-shrink:0;box-shadow:0 1px 0 rgba(255,255,255,0.1)}
 .topnav .logo{display:flex;align-items:center;gap:8px;font-size:16px;font-weight:700;letter-spacing:-0.01em}
-.topnav .logo i{font-size:20px;opacity:0.9}
-.topnav .badge{font-size:11px;padding:3px 8px;border-radius:20px;background:rgba(255,255,255,0.15);color:rgba(255,255,255,0.9)}
+.topnav .logo i{font-size:20px}
 .topnav .spacer{flex:1}
-.topnav .conn{font-size:12px;display:flex;align-items:center;gap:5px;opacity:0.8}
-.topnav .conn.online{opacity:1;color:#6ee7b7}
-.topnav button.nav-signout{background:rgba(255,255,255,0.12);border:none;color:#fff;padding:7px 14px;border-radius:8px;cursor:pointer;font-size:13px;font-family:'DM Sans',sans-serif}
-.topnav button.nav-signout:hover{background:rgba(255,255,255,0.2)}
+.topnav .conn{font-size:12px;display:flex;align-items:center;gap:5px;color:rgba(255,255,255,0.6)}
+.topnav .conn.online{color:#6ee7b7}
+.nav-signout{background:rgba(255,255,255,0.12);border:none;color:#fff;padding:7px 14px;border-radius:8px;cursor:pointer;font-size:13px;font-family:'DM Sans',sans-serif;display:flex;align-items:center;gap:6px}
+.nav-signout:hover{background:rgba(255,255,255,0.2)}
 
-/* ── Sidebar + content ── */
 .layout{display:flex;flex:1;overflow:hidden}
-.sidebar{width:220px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:12px 0;flex-shrink:0}
-.sidebar-section{padding:6px 16px 4px;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-top:6px}
-.nav-item{display:flex;align-items:center;gap:10px;padding:9px 16px;cursor:pointer;border-radius:8px;margin:1px 8px;color:var(--text2);font-size:13px;font-weight:500;transition:background .12s,color .12s}
-.nav-item i{font-size:18px;width:20px;flex-shrink:0}
+.sidebar{width:220px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:10px 0;flex-shrink:0;overflow-y:auto}
+.sidebar-section{padding:8px 16px 4px;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-top:4px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 14px;cursor:pointer;border-radius:8px;margin:1px 8px;color:var(--text2);font-size:13px;font-weight:500;transition:background .12s,color .12s}
+.nav-item i{font-size:17px;width:20px;flex-shrink:0;text-align:center}
 .nav-item:hover{background:var(--surface2)}
 .nav-item.active{background:var(--brand-pale);color:var(--brand)}
-.content{flex:1;overflow-y:auto;padding:24px;display:flex;flex-direction:column;gap:0}
+.content{flex:1;overflow-y:auto;padding:24px;background:var(--surface2)}
 
-/* ── Panel system ── */
+/* PANELS */
 .panel{display:none}
 .panel.active{display:block}
-.page-title{font-size:20px;font-weight:700;margin-bottom:4px;letter-spacing:-0.02em}
-.page-sub{font-size:13px;color:var(--text3);margin-bottom:20px}
+.page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;gap:16px;flex-wrap:wrap}
+.page-title{font-size:20px;font-weight:700;letter-spacing:-0.02em;color:var(--text)}
+.page-sub{font-size:13px;color:var(--text3);margin-top:3px}
 
-/* ── Cards ── */
+/* CARDS */
 .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow)}
-.card-title{font-size:14px;font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:8px}
-.card-title i{font-size:18px;color:var(--text3)}
-.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
-.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;box-shadow:var(--shadow)}
-.stat-val{font-size:26px;font-weight:700;letter-spacing:-0.03em}
-.stat-label{font-size:12px;color:var(--text3);margin-top:2px}
+.card-title{font-size:13px;font-weight:600;color:var(--text2);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.card-title i{font-size:17px;color:var(--text3)}
 
-/* ── Buttons ── */
-.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;font-size:13px;font-weight:600;border-radius:8px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;transition:opacity .15s,transform .1s}
+/* STAT CARDS */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.stat-card .icon{position:absolute;right:16px;top:50%;transform:translateY(-50%);font-size:32px;opacity:0.07}
+.stat-val{font-size:28px;font-weight:700;letter-spacing:-0.03em;line-height:1}
+.stat-label{font-size:12px;color:var(--text3);margin-top:4px;font-weight:500}
+.stat-delta{font-size:11px;margin-top:8px;display:flex;align-items:center;gap:4px;font-weight:600}
+.stat-delta.up{color:var(--success)}
+.stat-delta.down{color:var(--danger)}
+.stat-delta.neutral{color:var(--text3)}
+
+/* GRID LAYOUTS */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px}
+.grid-6-4{display:grid;grid-template-columns:3fr 2fr;gap:16px;margin-bottom:16px}
+.mb-16{margin-bottom:16px}
+
+/* CHART CONTAINERS */
+.chart-wrap{position:relative;width:100%}
+.chart-wrap canvas{max-height:240px}
+.chart-wrap-tall canvas{max-height:300px}
+.chart-wrap-sm canvas{max-height:180px}
+
+/* FILTERS */
+.filter-bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 16px;margin-bottom:20px;box-shadow:var(--shadow)}
+.filter-bar label{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.05em;white-space:nowrap}
+.filter-group{display:flex;flex-direction:column;gap:4px}
+.filter-bar select,.filter-bar input[type=date]{font-family:'DM Sans',sans-serif;font-size:13px;padding:7px 10px;border:1px solid var(--border2);border-radius:7px;background:var(--surface2);color:var(--text);outline:none;min-width:130px}
+.filter-bar select:focus,.filter-bar input:focus{border-color:var(--brand);background:#fff}
+.filter-divider{width:1px;height:36px;background:var(--border);margin:0 4px}
+
+/* QUICK FILTER PILLS */
+.quick-filters{display:flex;gap:6px;flex-wrap:wrap}
+.qf{padding:6px 14px;border-radius:20px;border:1px solid var(--border2);background:var(--surface2);cursor:pointer;font-size:12px;font-weight:600;color:var(--text3);font-family:'DM Sans',sans-serif;transition:all .12s}
+.qf:hover{border-color:var(--brand);color:var(--brand)}
+.qf.active{background:var(--brand);color:#fff;border-color:var(--brand)}
+
+/* TABLES */
+.table-wrap{overflow-x:auto;border-radius:var(--radius);border:1px solid var(--border);background:var(--surface)}
+table{width:100%;border-collapse:collapse}
+th{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.05em;padding:10px 14px;border-bottom:1px solid var(--border);text-align:left;white-space:nowrap;background:var(--surface2)}
+td{padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px;vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--surface2)}
+
+/* TAGS / BADGES */
+.tag{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:3px 8px;border-radius:20px;white-space:nowrap}
+.tag.ok{background:var(--success-bg);color:var(--success)}
+.tag.warn{background:var(--warn-bg);color:var(--warn)}
+.tag.danger{background:var(--danger-bg);color:var(--danger)}
+.tag.info{background:var(--brand-pale);color:var(--brand)}
+.tag.purple{background:var(--purple-bg);color:var(--purple)}
+.tag.bait{background:#d1fae5;color:#065f46}
+.tag.fly{background:var(--brand-pale);color:var(--brand)}
+
+/* PROGRESS BAR */
+.prog-bar{height:6px;background:var(--surface3);border-radius:4px;overflow:hidden;margin-top:4px}
+.prog-fill{height:100%;border-radius:4px;transition:width .4s}
+.prog-fill.green{background:var(--accent)}
+.prog-fill.blue{background:var(--brand)}
+.prog-fill.red{background:var(--danger)}
+.prog-fill.warn{background:var(--warn)}
+
+/* SITE COMPLETION LIST */
+.site-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)}
+.site-row:last-child{border-bottom:none}
+.site-row-name{font-size:13px;font-weight:500;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.site-row-pct{font-size:13px;font-weight:700;color:var(--brand);width:36px;text-align:right;flex-shrink:0}
+
+/* TECH LEADERBOARD */
+.tech-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)}
+.tech-row:last-child{border-bottom:none}
+.tech-avatar{width:32px;height:32px;border-radius:50%;background:var(--brand-pale);color:var(--brand);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+.tech-name{font-size:13px;font-weight:500;flex:1}
+.tech-count{font-size:13px;font-weight:700;color:var(--text2)}
+
+/* ALERT ITEMS */
+.alert-item{display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)}
+.alert-item:last-child{border-bottom:none}
+.alert-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:4px}
+.alert-dot.red{background:var(--danger)}
+.alert-dot.warn{background:var(--warn)}
+.alert-text{flex:1;font-size:13px;line-height:1.4}
+.alert-text strong{font-weight:600}
+.alert-meta{font-size:11px;color:var(--text3);margin-top:2px}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;font-size:13px;font-weight:600;border-radius:8px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;transition:opacity .15s,transform .1s;white-space:nowrap}
 .btn:active{transform:scale(0.98)}
 .btn-primary{background:var(--brand);color:#fff}
-.btn-primary:hover{background:#1a6bbf}
+.btn-primary:hover{background:var(--brand-light)}
 .btn-ghost{background:var(--surface2);color:var(--text);border:1px solid var(--border2)}
-.btn-ghost:hover{background:#e9ecf0}
+.btn-ghost:hover{background:var(--surface3)}
 .btn-danger{background:var(--danger-bg);color:var(--danger);border:1px solid rgba(220,38,38,0.2)}
-.btn-success{background:var(--success-bg);color:var(--success);border:1px solid rgba(5,150,105,0.2)}
 .btn-sm{padding:6px 12px;font-size:12px}
+.btn-accent{background:var(--accent);color:#065f46}
 
-/* ── Forms ── */
+/* FORMS */
 .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .form-full{grid-column:1/-1}
 .field{display:flex;flex-direction:column;gap:5px}
-.field label{font-size:12px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.05em}
+.field label{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.05em}
 input,select,textarea{font-family:'DM Sans',sans-serif;font-size:14px;padding:9px 12px;border:1px solid var(--border2);border-radius:8px;background:var(--surface2);color:var(--text);outline:none;transition:border-color .15s,box-shadow .15s;width:100%}
 input:focus,select:focus,textarea:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(15,76,129,0.1);background:#fff}
 textarea{resize:vertical;min-height:80px}
 .form-actions{display:flex;gap:8px;margin-top:4px;padding-top:12px;border-top:1px solid var(--border)}
 
-/* ── Table ── */
-.table-wrap{overflow-x:auto;border-radius:var(--radius);border:1px solid var(--border);background:var(--surface)}
-table{width:100%;border-collapse:collapse}
-th{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;padding:10px 14px;border-bottom:1px solid var(--border);text-align:left;white-space:nowrap;background:var(--surface2)}
-td{padding:11px 14px;border-bottom:1px solid var(--border);font-size:13px;vertical-align:middle}
-tr:last-child td{border-bottom:none}
-tr:hover td{background:var(--surface2)}
-.tag{display:inline-block;font-size:11px;font-weight:600;padding:3px 8px;border-radius:20px}
-.tag.bait{background:#d1fae5;color:#065f46}
-.tag.fly{background:var(--brand-pale);color:var(--brand)}
-.tag.ok{background:var(--success-bg);color:var(--success)}
-.tag.warn{background:var(--warn-bg);color:var(--warn)}
-.tag.danger{background:var(--danger-bg);color:var(--danger)}
-.mono{font-family:'DM Mono',monospace;font-size:12px}
-
-/* ── Tree view (sites/locations/units) ── */
+/* TREE VIEW */
 .tree{display:flex;flex-direction:column;gap:10px}
 .tree-site{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)}
-.tree-site-hd{padding:14px 16px;display:flex;align-items:center;gap:12px;background:var(--surface)}
-.tree-site-hd .site-icon{width:38px;height:38px;border-radius:8px;background:#ede9fe;color:#5b21b6;display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0}
-.tree-site-hd .site-info{flex:1}
-.tree-site-hd .site-name{font-size:15px;font-weight:600}
-.tree-site-hd .site-addr{font-size:12px;color:var(--text3);margin-top:1px}
+.tree-site-hd{padding:14px 16px;display:flex;align-items:center;gap:12px}
+.site-icon{width:38px;height:38px;border-radius:8px;background:#ede9fe;color:#5b21b6;display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0}
+.site-info{flex:1}
+.site-name{font-size:15px;font-weight:600}
+.site-addr{font-size:12px;color:var(--text3);margin-top:1px}
 .tree-locs{padding:0 12px 12px;display:flex;flex-direction:column;gap:6px}
 .tree-loc{background:var(--surface2);border-radius:8px;overflow:hidden}
 .tree-loc-hd{padding:10px 12px;display:flex;align-items:center;gap:10px}
 .tree-loc-hd i{font-size:17px;color:var(--text3)}
-.tree-loc-hd .loc-name{font-size:13px;font-weight:500;flex:1}
+.loc-name{font-size:13px;font-weight:500;flex:1}
 .tree-units{padding:0 8px 8px;display:flex;flex-direction:column;gap:4px}
 .tree-unit{background:var(--surface);border:1px solid var(--border);border-radius:7px;padding:8px 12px;display:flex;align-items:center;gap:10px}
-.tree-unit .unit-info{flex:1}
-.tree-unit .unit-label{font-size:13px;font-weight:500}
-.tree-unit .unit-bc{font-family:'DM Mono',monospace;font-size:11px;color:var(--text3)}
-.inline-form{display:flex;gap:8px;align-items:flex-end;padding:8px;background:var(--brand-pale);border-radius:8px;flex-wrap:wrap}
-.inline-form input,.inline-form select{flex:1;min-width:120px;font-size:13px;padding:7px 10px}
-.divider{height:1px;background:var(--border);margin:16px 0}
+.unit-info{flex:1}
+.unit-label{font-size:13px;font-weight:500}
+.unit-bc{font-family:'DM Mono',monospace;font-size:11px;color:var(--text3)}
 
-/* ── Toast ── */
-#toast{position:fixed;bottom:24px;right:24px;padding:12px 18px;border-radius:10px;background:var(--text);color:#fff;font-size:13px;font-weight:500;z-index:500;transform:translateY(80px);transition:transform .25s cubic-bezier(0.34,1.56,0.64,1),opacity .25s;opacity:0;max-width:300px}
+/* TOAST */
+#toast{position:fixed;bottom:24px;right:24px;padding:12px 18px;border-radius:10px;background:var(--text);color:#fff;font-size:13px;font-weight:500;z-index:500;transform:translateY(80px);transition:transform .25s cubic-bezier(0.34,1.56,0.64,1),opacity .25s;opacity:0;max-width:320px;box-shadow:0 8px 24px rgba(0,0,0,0.2)}
 #toast.show{transform:translateY(0);opacity:1}
 #toast.success{background:#065f46}
 #toast.error{background:var(--danger)}
 
-/* ── Modal ── */
+/* MODAL */
 .modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:300;align-items:center;justify-content:center}
 .modal-bg.open{display:flex}
 .modal{background:var(--surface);border-radius:14px;padding:24px;width:480px;max-width:calc(100vw - 32px);display:flex;flex-direction:column;gap:14px;box-shadow:0 20px 60px rgba(0,0,0,0.2)}
 .modal-title{font-size:17px;font-weight:700}
 
-/* ── Responsive ── */
-@media(max-width:768px){
-  .sidebar{display:none}
+/* EMPTY STATE */
+.empty{text-align:center;padding:40px 20px;color:var(--text3)}
+.empty i{font-size:36px;margin-bottom:10px;display:block}
+.empty p{font-size:13px}
+
+/* MONO */
+.mono{font-family:'DM Mono',monospace;font-size:12px}
+
+/* LOADING SPINNER */
+.spinner{display:inline-block;width:18px;height:18px;border:2px solid var(--border2);border-top-color:var(--brand);border-radius:50%;animation:spin .6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+@media(max-width:900px){
   .stats-grid{grid-template-columns:1fr 1fr}
-  .form-grid{grid-template-columns:1fr}
+  .grid-2,.grid-3,.grid-6-4{grid-template-columns:1fr}
+  .sidebar{width:180px}
 }
 </style>
 </head>
@@ -143,21 +215,21 @@ tr:hover td{background:var(--surface2)}
 <div id="auth-overlay">
   <div class="auth-box">
     <div class="auth-logo"><i class="ti ti-bug"></i><span>PestTrack Admin</span></div>
-    <h2>Sign in</h2>
-    <p>Enter your Supabase credentials to manage sites, units and technicians.</p>
+    <h2 style="font-size:17px;font-weight:600">Sign in</h2>
     <div class="field"><label>Supabase project URL</label>
       <input type="url" id="a-url" placeholder="https://xxxx.supabase.co" autocomplete="off">
     </div>
-    <div class="field"><label>Service role key <span style="font-weight:400;text-transform:none">(not the anon key)</span></label>
+    <div class="field"><label>Service role key</label>
       <input type="password" id="a-key" placeholder="eyJhbGci…" autocomplete="off">
     </div>
     <div class="field"><label>Admin password</label>
-      <input type="password" id="a-pass" placeholder="Set in config below" autocomplete="off">
+      <input type="password" id="a-pass" placeholder="Your admin password" autocomplete="off"
+        onkeydown="if(event.key==='Enter') doAdminLogin()">
     </div>
     <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="doAdminLogin()">
       <i class="ti ti-login"></i> Sign in
     </button>
-    <p style="font-size:11px;color:var(--text3)">Credentials are stored only in this browser session — never sent anywhere except your Supabase project.</p>
+    <p style="font-size:11px;color:var(--text3)">Credentials stored in session only — never sent anywhere except your Supabase project.</p>
   </div>
 </div>
 
@@ -165,10 +237,10 @@ tr:hover td{background:var(--surface2)}
 <div id="shell">
   <nav class="topnav">
     <div class="logo"><i class="ti ti-bug"></i>PestTrack</div>
-    <span class="badge">Admin</span>
+    <span style="font-size:11px;padding:3px 9px;border-radius:20px;background:rgba(255,255,255,0.15);color:rgba(255,255,255,0.85);font-weight:600">Admin</span>
     <div class="spacer"></div>
     <span class="conn" id="admin-conn"><i class="ti ti-wifi-off"></i> Offline</span>
-    <button class="nav-signout" onclick="adminSignOut()" style="margin-left:16px"><i class="ti ti-logout" style="vertical-align:-2px"></i> Sign out</button>
+    <button class="nav-signout" onclick="adminSignOut()" style="margin-left:14px"><i class="ti ti-logout"></i> Sign out</button>
   </nav>
   <div class="layout">
     <aside class="sidebar">
@@ -185,135 +257,207 @@ tr:hover td{background:var(--surface2)}
     </aside>
     <main class="content">
 
-      <!-- DASHBOARD -->
+      <!-- ══════════ DASHBOARD ══════════ -->
       <div class="panel active" id="panel-dashboard">
-        <div class="page-title">Dashboard</div>
-        <div class="page-sub" id="dash-date"></div>
-        <div class="stats-grid" id="stat-cards">
-          <div class="stat-card"><div class="stat-val" id="s-sites">—</div><div class="stat-label">Active sites</div></div>
-          <div class="stat-card"><div class="stat-val" id="s-units">—</div><div class="stat-label">Inspection units</div></div>
-          <div class="stat-card"><div class="stat-val" id="s-techs">—</div><div class="stat-label">Technicians</div></div>
-          <div class="stat-card"><div class="stat-val" id="s-today">—</div><div class="stat-label">Inspections today</div></div>
+        <div class="page-header">
+          <div>
+            <div class="page-title">Dashboard</div>
+            <div class="page-sub" id="dash-date"></div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <button class="btn btn-ghost btn-sm" onclick="loadDashboard()"><i class="ti ti-refresh"></i> Refresh</button>
+            <input type="date" id="dash-export-date" style="font-size:12px;padding:6px 10px;border-radius:7px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-family:'DM Sans',sans-serif;outline:none">
+          </div>
         </div>
-        <div class="card">
-          <div class="card-title"><i class="ti ti-clipboard-check"></i> Today's inspections</div>
-          <div id="today-table"><p style="color:var(--text3);font-size:13px">Loading…</p></div>
+
+        <!-- Quick filter pills -->
+        <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
+          <button class="qf active" onclick="setDashPeriod('today',this)">Today</button>
+          <button class="qf" onclick="setDashPeriod('week',this)">This week</button>
+          <button class="qf" onclick="setDashPeriod('month',this)">This month</button>
+          <button class="qf" onclick="setDashPeriod('custom',this)">Custom range</button>
+          <div id="custom-range" style="display:none;gap:8px;align-items:center">
+            <input type="date" id="range-from" style="font-size:12px;padding:6px 10px;border-radius:7px;border:1px solid var(--border2);background:var(--surface);font-family:'DM Sans',sans-serif;outline:none">
+            <span style="font-size:12px;color:var(--text3)">to</span>
+            <input type="date" id="range-to" style="font-size:12px;padding:6px 10px;border-radius:7px;border:1px solid var(--border2);background:var(--surface);font-family:'DM Sans',sans-serif;outline:none">
+            <button class="btn btn-primary btn-sm" onclick="loadDashboard()">Apply</button>
+          </div>
         </div>
+
+        <!-- KPI stat cards -->
+        <div class="stats-grid" id="kpi-cards">
+          <div class="stat-card"><i class="ti ti-clipboard-check icon"></i>
+            <div class="stat-val" id="kpi-total">—</div>
+            <div class="stat-label">Total inspections</div>
+            <div class="stat-delta neutral" id="kpi-total-d"><i class="ti ti-minus" style="font-size:10px"></i> vs prior period</div>
+          </div>
+          <div class="stat-card"><i class="ti ti-circle-check icon"></i>
+            <div class="stat-val" id="kpi-completion" style="color:var(--success)">—</div>
+            <div class="stat-label">Completion rate</div>
+            <div class="stat-delta neutral" id="kpi-comp-d"><i class="ti ti-minus" style="font-size:10px"></i> vs prior period</div>
+          </div>
+          <div class="stat-card"><i class="ti ti-alert-triangle icon"></i>
+            <div class="stat-val" id="kpi-issues" style="color:var(--warn)">—</div>
+            <div class="stat-label">Issues found</div>
+            <div class="stat-delta neutral" id="kpi-issues-d"><i class="ti ti-minus" style="font-size:10px"></i> damaged / tampered / missing</div>
+          </div>
+          <div class="stat-card"><i class="ti ti-barcode icon"></i>
+            <div class="stat-val" id="kpi-mismatch" style="color:var(--danger)">—</div>
+            <div class="stat-label">Barcode mismatches</div>
+            <div class="stat-delta neutral" id="kpi-mismatch-d"><i class="ti ti-minus" style="font-size:10px"></i> scanned vs expected</div>
+          </div>
+        </div>
+
+        <!-- Row 1: Inspections over time + Condition breakdown -->
+        <div class="grid-6-4">
+          <div class="card">
+            <div class="card-title"><i class="ti ti-chart-line"></i> Inspections over time</div>
+            <div class="chart-wrap"><canvas id="chart-timeline"></canvas></div>
+          </div>
+          <div class="card">
+            <div class="card-title"><i class="ti ti-chart-donut"></i> Condition breakdown</div>
+            <div class="chart-wrap" style="display:flex;align-items:center;justify-content:center">
+              <canvas id="chart-condition" style="max-height:200px;max-width:200px"></canvas>
+            </div>
+            <div id="condition-legend" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;justify-content:center"></div>
+          </div>
+        </div>
+
+        <!-- Row 2: Site completion + Tech activity + Bait usage -->
+        <div class="grid-3">
+          <div class="card">
+            <div class="card-title"><i class="ti ti-building-skyscraper"></i> Site completion</div>
+            <div id="site-completion-list"></div>
+          </div>
+          <div class="card">
+            <div class="card-title"><i class="ti ti-users"></i> Technician activity</div>
+            <div id="tech-leaderboard"></div>
+          </div>
+          <div class="card">
+            <div class="card-title"><i class="ti ti-chart-bar"></i> Bait usage</div>
+            <div class="chart-wrap-sm"><canvas id="chart-bait"></canvas></div>
+          </div>
+        </div>
+
+        <!-- Row 3: Unit type split + Alerts -->
+        <div class="grid-6-4">
+          <div class="card">
+            <div class="card-title"><i class="ti ti-alert-circle"></i> Issues requiring attention</div>
+            <div id="alerts-list"></div>
+          </div>
+          <div class="card">
+            <div class="card-title"><i class="ti ti-chart-pie"></i> Unit type split</div>
+            <div class="chart-wrap" style="display:flex;align-items:center;justify-content:center">
+              <canvas id="chart-type" style="max-height:180px;max-width:180px"></canvas>
+            </div>
+            <div id="type-legend" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;justify-content:center"></div>
+          </div>
+        </div>
+
       </div>
 
-      <!-- SITES & UNITS -->
+      <!-- ══════════ SITES & UNITS ══════════ -->
       <div class="panel" id="panel-sites">
-        <div class="page-title">Sites &amp; Units</div>
-        <div class="page-sub">Manage the site → location → unit hierarchy. Changes sync to all field devices instantly.</div>
-        <div style="display:flex;justify-content:flex-end;margin-bottom:12px">
+        <div class="page-header">
+          <div><div class="page-title">Sites &amp; Units</div>
+          <div class="page-sub">Manage the site → location → unit hierarchy. Changes sync to all field devices instantly.</div></div>
           <button class="btn btn-primary" onclick="openModal('modal-add-site')"><i class="ti ti-plus"></i> Add site</button>
         </div>
-        <div class="tree" id="site-tree"><p style="color:var(--text3);font-size:13px">Loading…</p></div>
+        <div class="tree" id="site-tree"><div class="empty"><i class="ti ti-building-skyscraper"></i><p>Loading…</p></div></div>
       </div>
 
-      <!-- TECHNICIANS -->
+      <!-- ══════════ TECHNICIANS ══════════ -->
       <div class="panel" id="panel-technicians">
-        <div class="page-title">Technicians</div>
-        <div class="page-sub">Add or remove technicians. They appear on the field app sign-in screen.</div>
-        <div class="card" style="margin-bottom:16px">
+        <div class="page-header">
+          <div><div class="page-title">Technicians</div>
+          <div class="page-sub">Add or remove technicians. They appear on the field app sign-in screen.</div></div>
+        </div>
+        <div class="card mb-16">
           <div class="card-title"><i class="ti ti-user-plus"></i> Add technician</div>
           <div class="form-grid">
             <div class="field"><label>Full name</label><input type="text" id="new-tech-name" placeholder="e.g. Sipho Dlamini"></div>
-            <div class="field"><label>Initials (auto)</label><input type="text" id="new-tech-initials" placeholder="e.g. SD" maxlength="3"></div>
+            <div class="field"><label>Initials (auto-filled)</label><input type="text" id="new-tech-initials" placeholder="e.g. SD" maxlength="3"></div>
           </div>
-          <div class="form-actions">
-            <button class="btn btn-primary" onclick="addTech()"><i class="ti ti-plus"></i> Add technician</button>
-          </div>
+          <div class="form-actions"><button class="btn btn-primary" onclick="addTech()"><i class="ti ti-plus"></i> Add technician</button></div>
         </div>
-        <div class="table-wrap" id="tech-table-wrap">
+        <div class="table-wrap">
           <table><thead><tr><th>Name</th><th>Initials</th><th>Added</th><th></th></tr></thead>
-          <tbody id="tech-tbody"><tr><td colspan="4" style="color:var(--text3)">Loading…</td></tr></tbody></table>
+          <tbody id="tech-tbody"><tr><td colspan="4" style="color:var(--text3);text-align:center;padding:20px">Loading…</td></tr></tbody>
+          </table>
         </div>
       </div>
 
-      <!-- INSPECTIONS -->
+      <!-- ══════════ INSPECTIONS ══════════ -->
       <div class="panel" id="panel-inspections">
-        <div class="page-title">Inspection records</div>
-        <div class="page-sub">All synced inspection records from field devices.</div>
+        <div class="page-header">
+          <div><div class="page-title">Inspection records</div>
+          <div class="page-sub">All synced records from field devices.</div></div>
+        </div>
         <div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;align-items:flex-end">
-          <div class="field" style="flex:1;min-width:160px"><label>Filter by date</label>
-            <input type="date" id="filter-date" onchange="loadInspections()">
-          </div>
-          <div class="field" style="flex:1;min-width:140px"><label>Filter by site</label>
-            <select id="filter-site" onchange="loadInspections()"><option value="">All sites</option></select>
-          </div>
-          <div class="field" style="flex:1;min-width:140px"><label>Filter by tech</label>
-            <select id="filter-tech" onchange="loadInspections()"><option value="">All technicians</option></select>
-          </div>
+          <div class="field" style="flex:1;min-width:140px"><label>Date</label><input type="date" id="filter-date" onchange="loadInspections()"></div>
+          <div class="field" style="flex:1;min-width:140px"><label>Site</label>
+            <select id="filter-site" onchange="loadInspections()"><option value="">All sites</option></select></div>
+          <div class="field" style="flex:1;min-width:140px"><label>Technician</label>
+            <select id="filter-tech" onchange="loadInspections()"><option value="">All technicians</option></select></div>
+          <div class="field" style="flex:1;min-width:120px"><label>Condition</label>
+            <select id="filter-cond" onchange="loadInspections()"><option value="">All</option><option>Good</option><option>Damaged</option><option>Tampered</option><option>Missing</option></select></div>
           <button class="btn btn-ghost btn-sm" onclick="clearFilters()"><i class="ti ti-x"></i> Clear</button>
         </div>
         <div class="table-wrap">
-          <table><thead><tr><th>Date</th><th>Tech</th><th>Site</th><th>Location</th><th>Unit</th><th>Type</th><th>Inspected</th><th>Condition</th><th>Barcode</th><th>Bait</th><th>Batch</th><th>Notes</th></tr></thead>
-          <tbody id="inspect-tbody"><tr><td colspan="12" style="color:var(--text3)">Loading…</td></tr></tbody>
-          </table>
+          <table><thead><tr><th>Date</th><th>Time</th><th>Tech</th><th>Site</th><th>Location</th><th>Unit</th><th>Type</th><th>Inspected</th><th>Condition</th><th>Barcode</th><th>Bait</th><th>Batch</th><th>Notes</th></tr></thead>
+          <tbody id="inspect-tbody"><tr><td colspan="13" style="color:var(--text3);text-align:center;padding:20px">Loading…</td></tr></tbody></table>
         </div>
-        <div id="inspect-pagination" style="display:flex;gap:8px;margin-top:12px;align-items:center"></div>
+        <div id="inspect-pagination" style="display:flex;gap:8px;margin-top:12px;align-items:center;font-size:13px;color:var(--text3)"></div>
       </div>
 
-      <!-- EXPORT -->
+      <!-- ══════════ EXPORT ══════════ -->
       <div class="panel" id="panel-export">
-        <div class="page-title">Export data</div>
-        <div class="page-sub">Download inspection records for reporting or archiving.</div>
-        <div style="display:flex;flex-direction:column;gap:12px;max-width:460px">
+        <div class="page-header"><div><div class="page-title">Export data</div>
+        <div class="page-sub">Download inspection records for reporting or archiving.</div></div></div>
+        <div style="display:flex;flex-direction:column;gap:14px;max-width:500px">
           <div class="card">
-            <div class="card-title"><i class="ti ti-file-spreadsheet"></i> Export inspections (CSV)</div>
-            <p style="font-size:13px;color:var(--text2);margin-bottom:14px">All synced records in a spreadsheet-compatible format.</p>
-            <div style="display:flex;gap:8px">
-              <div class="field" style="flex:1"><label>Date from</label><input type="date" id="exp-from"></div>
-              <div class="field" style="flex:1"><label>Date to</label><input type="date" id="exp-to"></div>
+            <div class="card-title"><i class="ti ti-file-spreadsheet"></i> Export inspections</div>
+            <div class="form-grid">
+              <div class="field"><label>Date from</label><input type="date" id="exp-from"></div>
+              <div class="field"><label>Date to</label><input type="date" id="exp-to"></div>
             </div>
             <div class="form-actions">
-              <button class="btn btn-primary" onclick="exportCSV()"><i class="ti ti-download"></i> Download CSV</button>
-              <button class="btn btn-ghost" onclick="exportJSON()"><i class="ti ti-code"></i> Download JSON</button>
+              <button class="btn btn-primary" onclick="exportCSV()"><i class="ti ti-download"></i> CSV</button>
+              <button class="btn btn-ghost" onclick="exportJSON()"><i class="ti ti-code"></i> JSON</button>
             </div>
           </div>
           <div class="card">
-            <div class="card-title"><i class="ti ti-database-export"></i> Full database backup</div>
-            <p style="font-size:13px;color:var(--text2);margin-bottom:14px">Export sites, locations, units and technicians as JSON — useful for migrations or backups.</p>
-            <button class="btn btn-ghost" onclick="exportConfig()"><i class="ti ti-download"></i> Export config JSON</button>
+            <div class="card-title"><i class="ti ti-database-export"></i> Config backup</div>
+            <p style="font-size:13px;color:var(--text2);margin-bottom:12px">Export sites, locations, units and technicians as JSON.</p>
+            <button class="btn btn-ghost" onclick="exportConfig()"><i class="ti ti-download"></i> Export config</button>
           </div>
         </div>
       </div>
 
-      <!-- SETTINGS -->
+      <!-- ══════════ SETTINGS ══════════ -->
       <div class="panel" id="panel-settings">
-        <div class="page-title">Settings</div>
-        <div class="page-sub">Connection details and field app configuration.</div>
+        <div class="page-header"><div><div class="page-title">Settings</div>
+        <div class="page-sub">Connection details and field app configuration.</div></div></div>
         <div style="display:flex;flex-direction:column;gap:14px;max-width:520px">
           <div class="card">
-            <div class="card-title"><i class="ti ti-plug"></i> Supabase connection</div>
-            <div class="form-grid">
-              <div class="field form-full"><label>Project URL</label><input type="url" id="cfg-url" readonly></div>
-              <div class="field form-full"><label>Service role key (stored in session only)</label><input type="password" id="cfg-key" readonly></div>
-            </div>
-            <p style="font-size:12px;color:var(--text3);margin-top:8px">To change credentials, sign out and sign in again.</p>
+            <div class="card-title"><i class="ti ti-plug"></i> Connection</div>
+            <div class="field mb-16"><label>Project URL</label><input type="url" id="cfg-url" readonly></div>
+            <p style="font-size:12px;color:var(--text3)">To change credentials, sign out and sign in again.</p>
           </div>
           <div class="card">
-            <div class="card-title"><i class="ti ti-device-mobile"></i> Field app connection string</div>
-            <p style="font-size:13px;color:var(--text2);margin-bottom:10px">Copy the <strong>anon key</strong> and URL below into the <code>PREBAKED_URL</code> and <code>PREBAKED_KEY</code> constants at the top of <code>index.html</code> before distributing to field devices.</p>
-            <div class="field"><label>Anon/public key (safe for field devices)</label>
-              <input type="text" id="cfg-anon-display" placeholder="Enter your anon key here to display it" autocomplete="off">
-            </div>
-            <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px;font-family:'DM Mono',monospace;font-size:12px;color:var(--text2);margin-top:8px;line-height:1.8" id="code-snippet">
-              Fill in your anon key above to generate the snippet.
-            </div>
-            <button class="btn btn-ghost btn-sm" style="margin-top:8px" onclick="copySnippet()"><i class="ti ti-copy"></i> Copy snippet</button>
+            <div class="card-title"><i class="ti ti-device-mobile"></i> Field app snippet</div>
+            <p style="font-size:13px;color:var(--text2);margin-bottom:10px">Paste your <strong>anon key</strong> below to generate the snippet for <code>index.html</code>.</p>
+            <div class="field"><label>Anon/public key</label><input type="text" id="cfg-anon-display" placeholder="eyJhbGci…" oninput="updateSnippet()"></div>
+            <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px;font-family:'DM Mono',monospace;font-size:12px;color:var(--text2);margin-top:10px;line-height:1.8;white-space:pre-wrap;word-break:break-all" id="code-snippet">Enter your anon key above.</div>
+            <button class="btn btn-ghost btn-sm" style="margin-top:8px" onclick="copySnippet()"><i class="ti ti-copy"></i> Copy</button>
           </div>
           <div class="card">
             <div class="card-title"><i class="ti ti-lock"></i> Admin password</div>
-            <p style="font-size:13px;color:var(--text2);margin-bottom:10px">Change the password used to access this admin panel. Stored as a hash in Supabase settings.</p>
             <div class="form-grid">
               <div class="field"><label>New password</label><input type="password" id="new-pass"></div>
               <div class="field"><label>Confirm</label><input type="password" id="new-pass2"></div>
             </div>
-            <div class="form-actions">
-              <button class="btn btn-primary" onclick="changePassword()"><i class="ti ti-check"></i> Update password</button>
-            </div>
+            <div class="form-actions"><button class="btn btn-primary" onclick="changePassword()"><i class="ti ti-check"></i> Update</button></div>
           </div>
         </div>
       </div>
@@ -326,33 +470,30 @@ tr:hover td{background:var(--surface2)}
 <div class="modal-bg" id="modal-add-site">
   <div class="modal">
     <div class="modal-title">Add new site</div>
-    <div class="form-grid">
-      <div class="field form-full"><label>Site name</label><input type="text" id="ms-name" placeholder="e.g. Sandton Office Park"></div>
-      <div class="field form-full"><label>Address</label><input type="text" id="ms-addr" placeholder="e.g. Sandton, Johannesburg"></div>
-    </div>
+    <div class="field"><label>Site name</label><input type="text" id="ms-name" placeholder="e.g. Sandton Office Park"></div>
+    <div class="field"><label>Address</label><input type="text" id="ms-addr" placeholder="e.g. Sandton, Johannesburg"></div>
     <div class="form-actions">
       <button class="btn btn-ghost" onclick="closeModal('modal-add-site')">Cancel</button>
       <button class="btn btn-primary" onclick="addSite()"><i class="ti ti-plus"></i> Add site</button>
     </div>
   </div>
 </div>
-
 <div class="modal-bg" id="modal-add-loc">
   <div class="modal">
     <div class="modal-title">Add location</div>
-    <div class="form-grid">
-      <div class="field form-full"><label>Location name</label><input type="text" id="ml-name" placeholder="e.g. Kitchen / canteen"></div>
-      <div class="field form-full"><label>Icon</label>
-        <select id="ml-icon">
-          <option value="ti-building">Poultry House</option>
-          <option value="ti-car">Office</option>
-          <option value="ti-truck">Storage</option>
-          <option value="ti-trash">Shop</option>
-          <option value="ti-toilet-paper">Processing Area</option>
-          <option value="ti-box">Perimeter/Fence</option>
-          <option value="ti-building">Other Building</option>
-               </select>
-      </div>
+    <div class="field"><label>Location name</label><input type="text" id="ml-name" placeholder="e.g. Kitchen"></div>
+    <div class="field"><label>Icon</label>
+      <select id="ml-icon">
+        <option value="ti-tools-kitchen-2">Kitchen / canteen</option>
+        <option value="ti-car">Parking / basement</option>
+        <option value="ti-truck">Loading bay</option>
+        <option value="ti-trash">Refuse / waste</option>
+        <option value="ti-toilet-paper">Bathroom</option>
+        <option value="ti-box">Storage / warehouse</option>
+        <option value="ti-building">Office / reception</option>
+        <option value="ti-plant">Garden / perimeter</option>
+        <option value="ti-stairs">Stairwell</option>
+      </select>
     </div>
     <div class="form-actions">
       <button class="btn btn-ghost" onclick="closeModal('modal-add-loc')">Cancel</button>
@@ -360,16 +501,13 @@ tr:hover td{background:var(--surface2)}
     </div>
   </div>
 </div>
-
 <div class="modal-bg" id="modal-add-unit">
   <div class="modal">
     <div class="modal-title">Add inspection unit</div>
-    <div class="form-grid">
-      <div class="field form-full"><label>Label</label><input type="text" id="mu-label" placeholder="e.g. Bait box BB-01"></div>
-      <div class="field"><label>Barcode</label><input type="text" id="mu-barcode" placeholder="e.g. BB-001-SND" autocomplete="off"></div>
-      <div class="field"><label>Unit type</label>
-        <select id="mu-type"><option value="bait">Bait box</option><option value="fly">Fly unit</option></select>
-      </div>
+    <div class="field"><label>Label</label><input type="text" id="mu-label" placeholder="e.g. Bait box BB-01"></div>
+    <div class="field"><label>Barcode</label><input type="text" id="mu-barcode" placeholder="e.g. BB-001-SND" autocomplete="off"></div>
+    <div class="field"><label>Unit type</label>
+      <select id="mu-type"><option value="bait">Bait box</option><option value="fly">Fly unit</option></select>
     </div>
     <div class="form-actions">
       <button class="btn btn-ghost" onclick="closeModal('modal-add-unit')">Cancel</button>
@@ -377,7 +515,6 @@ tr:hover td{background:var(--surface2)}
     </div>
   </div>
 </div>
-
 <div class="modal-bg" id="modal-confirm">
   <div class="modal" style="max-width:380px">
     <div class="modal-title" id="mc-title">Confirm</div>
@@ -392,9 +529,9 @@ tr:hover td{background:var(--surface2)}
 <div id="toast"></div>
 
 <script>
-// ── SESSION ────────────────────────────────────────────────────────────────────
+// ── SESSION ────────────────────────────────────────────────────────
 const S = { url: '', key: '' };
-const ADMIN_PASS_HASH_KEY = 'pt_admin_pass_hash';
+const PASS_KEY = 'pt_admin_pass_hash';
 
 async function sha256(str) {
   const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
@@ -402,27 +539,22 @@ async function sha256(str) {
 }
 
 async function doAdminLogin() {
-  const url  = document.getElementById('a-url').value.trim();
+  const url  = document.getElementById('a-url').value.trim().replace(/\/+$/, '');
   const key  = document.getElementById('a-key').value.trim();
   const pass = document.getElementById('a-pass').value;
   if (!url || !key) { toast('Enter Supabase URL and service role key', 'error'); return; }
-
-  const stored = localStorage.getItem(ADMIN_PASS_HASH_KEY);
+  const stored = localStorage.getItem(PASS_KEY);
   if (stored) {
-    const h = await sha256(pass);
-    if (h !== stored) { toast('Incorrect password', 'error'); return; }
+    if (await sha256(pass) !== stored) { toast('Incorrect password', 'error'); return; }
   } else {
-    // First run — set the password
     if (pass.length < 6) { toast('Set a password (min 6 chars) for future logins', 'error'); return; }
-    localStorage.setItem(ADMIN_PASS_HASH_KEY, await sha256(pass));
+    localStorage.setItem(PASS_KEY, await sha256(pass));
   }
-
   S.url = url; S.key = key;
   document.getElementById('cfg-url').value = url;
-  document.getElementById('cfg-key').value = key;
   document.getElementById('auth-overlay').style.display = 'none';
   document.getElementById('shell').classList.add('visible');
-  updateAdminConn(true);
+  updateAdminConn(navigator.onLine);
   loadAll();
 }
 
@@ -431,9 +563,10 @@ function adminSignOut() {
   document.getElementById('auth-overlay').style.display = 'flex';
   document.getElementById('shell').classList.remove('visible');
   document.getElementById('a-pass').value = '';
+  destroyCharts();
 }
 
-// ── SUPABASE ────────────────────────────────────────────────────────────────────
+// ── SUPABASE ───────────────────────────────────────────────────────
 async function sb(path, opts = {}) {
   const res = await fetch(S.url + '/rest/v1/' + path, {
     ...opts,
@@ -451,24 +584,12 @@ async function sb(path, opts = {}) {
   try { return JSON.parse(text); } catch { return null; }
 }
 
-// ── NAV ─────────────────────────────────────────────────────────────────────────
-function nav(panelId) {
-  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  document.getElementById(panelId).classList.add('active');
-  const map = { 'panel-dashboard':'Dashboard','panel-sites':'Sites & Units','panel-technicians':'Technicians','panel-inspections':'Inspections','panel-export':'Export','panel-settings':'Settings' };
-  document.querySelectorAll('.nav-item').forEach(n => { if (n.textContent.trim().replace('&','&amp;').includes(map[panelId]?.split('&')[0]?.trim() || '~~~')) n.classList.add('active'); });
-  // lazy load
-  if (panelId === 'panel-inspections') loadInspections();
-  if (panelId === 'panel-dashboard')   loadDashboard();
-}
-// Fix nav active state properly
+// ── NAV ────────────────────────────────────────────────────────────
 function nav(panelId) {
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
   document.getElementById(panelId).classList.add('active');
-  document.querySelectorAll('.nav-item').forEach(n => {
-    n.classList.toggle('active', n.getAttribute('onclick') === `nav('${panelId}')`);
-  });
+  document.querySelectorAll('.nav-item').forEach(n =>
+    n.classList.toggle('active', n.getAttribute('onclick') === `nav('${panelId}')`));
   if (panelId === 'panel-inspections') loadInspections();
   if (panelId === 'panel-dashboard')   loadDashboard();
 }
@@ -481,18 +602,17 @@ function updateAdminConn(online) {
 window.addEventListener('online',  () => updateAdminConn(true));
 window.addEventListener('offline', () => updateAdminConn(false));
 
-// ── TOAST / MODAL ───────────────────────────────────────────────────────────────
+// ── TOAST / MODAL ──────────────────────────────────────────────────
 let _tt;
 function toast(msg, type='') {
   const el = document.getElementById('toast');
   el.textContent = msg; el.className = 'show' + (type ? ' '+type : '');
-  clearTimeout(_tt); _tt = setTimeout(() => el.className = '', 3000);
+  clearTimeout(_tt); _tt = setTimeout(() => el.className = '', 3200);
 }
 function openModal(id)  { document.getElementById(id).classList.add('open'); }
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 document.querySelectorAll('.modal-bg').forEach(m =>
-  m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); })
-);
+  m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); }));
 let _cb = null;
 function confirmAction(title, body, cb) {
   document.getElementById('mc-title').textContent = title;
@@ -503,17 +623,362 @@ document.getElementById('mc-ok').addEventListener('click', () => {
   closeModal('modal-confirm'); if (_cb) { _cb(); _cb = null; }
 });
 
-// ── LOAD ALL ────────────────────────────────────────────────────────────────────
+// ── BOOT ───────────────────────────────────────────────────────────
 let _sites = [], _techs = [];
 async function loadAll() {
-  document.getElementById('dash-date').textContent = new Date().toLocaleDateString('en-ZA',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  document.getElementById('dash-date').textContent =
+    new Date().toLocaleDateString('en-ZA',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  // Set today's date as default for dash export
+  const today = new Date().toISOString().slice(0,10);
+  document.getElementById('dash-export-date').value = today;
+  document.getElementById('range-from').value = today;
+  document.getElementById('range-to').value   = today;
   await Promise.all([loadSites(), loadTechs()]);
   loadDashboard();
   populateFilterDropdowns();
-  populateSettingsSnippet();
 }
 
-// ── SITES ────────────────────────────────────────────────────────────────────────
+// ── DASHBOARD ──────────────────────────────────────────────────────
+let _dashPeriod = 'today';
+let _charts = {};
+
+function setDashPeriod(period, el) {
+  _dashPeriod = period;
+  document.querySelectorAll('.qf').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('custom-range').style.display = period === 'custom' ? 'flex' : 'none';
+  if (period !== 'custom') loadDashboard();
+}
+
+function getDashDates() {
+  const now   = new Date();
+  const today = now.toISOString().slice(0,10);
+  if (_dashPeriod === 'today')  return { from: today, to: today };
+  if (_dashPeriod === 'week')   {
+    const d = new Date(now); d.setDate(d.getDate() - 6);
+    return { from: d.toISOString().slice(0,10), to: today };
+  }
+  if (_dashPeriod === 'month')  {
+    const d = new Date(now); d.setDate(d.getDate() - 29);
+    return { from: d.toISOString().slice(0,10), to: today };
+  }
+  if (_dashPeriod === 'custom') {
+    return {
+      from: document.getElementById('range-from').value || today,
+      to:   document.getElementById('range-to').value   || today,
+    };
+  }
+  return { from: today, to: today };
+}
+
+function getPriorDates(from, to) {
+  const f = new Date(from), t = new Date(to);
+  const days = Math.round((t - f) / 86400000) + 1;
+  const pf = new Date(f); pf.setDate(pf.getDate() - days);
+  const pt = new Date(f); pt.setDate(pt.getDate() - 1);
+  return { from: pf.toISOString().slice(0,10), to: pt.toISOString().slice(0,10) };
+}
+
+async function loadDashboard() {
+  const { from, to } = getDashDates();
+  const prior = getPriorDates(from, to);
+
+  try {
+    const [rows, priorRows] = await Promise.all([
+      sb(`pest_inspections?tech_date=gte.${from}&tech_date=lte.${to}&select=*&order=timestamp.asc&limit=5000`),
+      sb(`pest_inspections?tech_date=gte.${prior.from}&tech_date=lte.${prior.to}&select=*&limit=5000`),
+    ]);
+
+    const data    = rows    || [];
+    const prData  = priorRows || [];
+
+    renderKPIs(data, prData);
+    renderTimelineChart(data, from, to);
+    renderConditionChart(data);
+    renderSiteCompletion(data);
+    renderTechLeaderboard(data);
+    renderBaitChart(data);
+    renderAlerts(data);
+    renderTypeChart(data);
+
+  } catch(e) {
+    toast('Dashboard load error: ' + e.message, 'error');
+  }
+}
+
+// KPIs
+function renderKPIs(data, prData) {
+  const total    = data.length;
+  const prTotal  = prData.length;
+  const ISSUE_CONDITIONS = ['Station Damaged – SD','Station missing – SM','Rodent activity Rebaited- RR','Mouldy Rebaited – MR','Bait dusty replaced – DU','Bait station blocked – BKD','Station Replaced –SR'];
+  const issues   = data.filter(r => ISSUE_CONDITIONS.includes(r.condition)).length;
+  const prIssues = prData.filter(r => ISSUE_CONDITIONS.includes(r.condition)).length;
+  const mismatches  = data.filter(r => r.barcode_match === false).length;
+  const prMismatches = prData.filter(r => r.barcode_match === false).length;
+
+  // Completion: inspected yes vs total
+  const inspected = data.filter(r => r.inspected === 'Yes').length;
+  const compPct   = total ? Math.round((inspected / total) * 100) : 0;
+  const prInspected = prData.filter(r => r.inspected === 'Yes').length;
+  const prCompPct   = prTotal ? Math.round((prInspected / prTotal) * 100) : 0;
+
+  document.getElementById('kpi-total').textContent      = total;
+  document.getElementById('kpi-completion').textContent = compPct + '%';
+  document.getElementById('kpi-issues').textContent     = issues;
+  document.getElementById('kpi-mismatch').textContent   = mismatches;
+
+  setDelta('kpi-total-d',    total,      prTotal,      '', 'inspections');
+  setDelta('kpi-comp-d',     compPct,    prCompPct,    '%', 'completion');
+  setDelta('kpi-issues-d',   issues,     prIssues,     '', 'issues', true);
+  setDelta('kpi-mismatch-d', mismatches, prMismatches, '', 'mismatches', true);
+}
+
+function setDelta(elId, curr, prev, suffix, label, invertColor=false) {
+  const el   = document.getElementById(elId);
+  const diff = curr - prev;
+  if (prev === 0) { el.className = 'stat-delta neutral'; el.innerHTML = `<i class="ti ti-minus" style="font-size:10px"></i> No prior data`; return; }
+  const pct  = Math.round((diff / prev) * 100);
+  const up   = diff >= 0;
+  const good = invertColor ? !up : up;
+  el.className = 'stat-delta ' + (diff === 0 ? 'neutral' : good ? 'up' : 'down');
+  const icon = diff === 0 ? 'ti-minus' : up ? 'ti-trending-up' : 'ti-trending-down';
+  el.innerHTML = `<i class="ti ${icon}" style="font-size:11px"></i> ${diff >= 0 ? '+' : ''}${pct}% vs prior period`;
+}
+
+// Timeline chart
+function renderTimelineChart(data, from, to) {
+  const dates = [];
+  const d = new Date(from);
+  const end = new Date(to);
+  while (d <= end) { dates.push(d.toISOString().slice(0,10)); d.setDate(d.getDate()+1); }
+
+  const counts = dates.map(dt => data.filter(r => r.tech_date === dt).length);
+  const ISSUE_CONDS = ['Station Damaged – SD','Station missing – SM','Rodent activity Rebaited- RR','Mouldy Rebaited – MR','Bait dusty replaced – DU','Bait station blocked – BKD','Station Replaced –SR'];
+  const issues = dates.map(dt => data.filter(r => r.tech_date === dt && ISSUE_CONDS.includes(r.condition)).length);
+
+  const labels = dates.map(dt => {
+    const d = new Date(dt + 'T00:00:00');
+    return d.toLocaleDateString('en-ZA',{day:'numeric',month:'short'});
+  });
+
+  destroyChart('chart-timeline');
+  const ctx = document.getElementById('chart-timeline').getContext('2d');
+  _charts['chart-timeline'] = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        { label: 'Inspections', data: counts, borderColor: '#0f4c81', backgroundColor: 'rgba(15,76,129,0.08)', fill: true, tension: 0.3, pointRadius: dates.length === 1 ? 5 : 3, borderWidth: 2 },
+        { label: 'Issues', data: issues, borderColor: '#dc2626', backgroundColor: 'rgba(220,38,38,0.06)', fill: true, tension: 0.3, pointRadius: dates.length === 1 ? 5 : 3, borderWidth: 2 },
+      ]
+    },
+    options: { responsive: true, plugins: { legend: { labels: { font: { family: 'DM Sans', size: 12 }, boxWidth: 12, padding: 16 } } }, scales: { y: { beginAtZero: true, ticks: { precision: 0, font: { family: 'DM Sans', size: 11 } }, grid: { color: 'rgba(0,0,0,0.05)' } }, x: { ticks: { font: { family: 'DM Sans', size: 11 }, maxTicksLimit: 14 }, grid: { display: false } } } }
+  });
+}
+
+// Condition donut — uses real condition values from the field app
+function renderConditionChart(data) {
+  const CONDS = [
+    { label: 'Inspected and Checked – OK', code: 'OK',  color: '#2dd4a7' },
+    { label: 'Station Damaged – SD',        code: 'SD',  color: '#f59e0b' },
+    { label: 'Station missing – SM',        code: 'SM',  color: '#dc2626' },
+    { label: 'Rodent activity Rebaited- RR',code: 'RR',  color: '#8b5cf6' },
+    { label: 'Mouldy Rebaited – MR',        code: 'MR',  color: '#f97316' },
+    { label: 'Bait dusty replaced – DU',    code: 'DU',  color: '#06b6d4' },
+    { label: 'Bait station blocked – BKD',  code: 'BKD', color: '#e11d48' },
+    { label: 'Station Replaced –SR',        code: 'SR',  color: '#64748b' },
+  ];
+  const counts = CONDS.map(c => data.filter(r => r.condition === c.label).length);
+  const total  = counts.reduce((a,b) => a+b, 0);
+
+  // Filter to only show conditions that have data
+  const active = CONDS.filter((_,i) => counts[i] > 0);
+  const activeCounts = counts.filter(c => c > 0);
+
+  destroyChart('chart-condition');
+  const ctx = document.getElementById('chart-condition').getContext('2d');
+  _charts['chart-condition'] = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: active.map(c => c.code),
+      datasets: [{ data: activeCounts, backgroundColor: active.map(c => c.color), borderWidth: 2, borderColor: '#fff' }]
+    },
+    options: { responsive: true, plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ` ${CONDS.find(c=>c.code===ctx.label)?.label||ctx.label}: ${ctx.raw}` } } }, cutout: '68%' }
+  });
+
+  const leg = document.getElementById('condition-legend');
+  leg.innerHTML = CONDS.map((c,i) => counts[i] === 0 ? '' : `
+    <div style="display:flex;align-items:center;gap:5px;font-size:11px;font-weight:500" title="${c.label}">
+      <span style="width:9px;height:9px;border-radius:50%;background:${c.color};flex-shrink:0"></span>
+      <span style="font-weight:700">${c.code}</span>
+      <span style="color:var(--text3);font-weight:400">${counts[i]} (${total ? Math.round(counts[i]/total*100) : 0}%)</span>
+    </div>`).join('');
+}
+
+// Site completion
+function renderSiteCompletion(data) {
+  const el = document.getElementById('site-completion-list');
+  if (!_sites.length) { el.innerHTML = '<p style="font-size:13px;color:var(--text3)">No sites loaded.</p>'; return; }
+
+  const siteStats = _sites.map(site => {
+    const total = site.locations?.reduce((a,l) => a + (l.units?.length||0), 0) || 0;
+    const done  = data.filter(r => r.site_id === site.id && r.inspected === 'Yes').length;
+    const pct   = total ? Math.min(100, Math.round((done/total)*100)) : 0;
+    return { name: site.name, done, total, pct };
+  }).sort((a,b) => b.pct - a.pct);
+
+  el.innerHTML = siteStats.map(s => `
+    <div class="site-row">
+      <div style="width:32px;height:32px;border-radius:8px;background:#ede9fe;color:#5b21b6;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">
+        <i class="ti ti-building-skyscraper"></i>
+      </div>
+      <div style="flex:1;min-width:0">
+        <div class="site-row-name">${s.name}</div>
+        <div class="prog-bar"><div class="prog-fill ${s.pct===100?'green':'blue'}" style="width:${s.pct}%"></div></div>
+        <div style="font-size:11px;color:var(--text3);margin-top:2px">${s.done} / ${s.total} units</div>
+      </div>
+      <div class="site-row-pct">${s.pct}%</div>
+    </div>`).join('') || '<p style="font-size:13px;color:var(--text3)">No data for this period.</p>';
+}
+
+// Tech leaderboard
+function renderTechLeaderboard(data) {
+  const el = document.getElementById('tech-leaderboard');
+  const techMap = {};
+  data.forEach(r => { techMap[r.tech] = (techMap[r.tech]||0) + 1; });
+  const sorted = Object.entries(techMap).sort((a,b) => b[1]-a[1]);
+
+  if (!sorted.length) { el.innerHTML = '<p style="font-size:13px;color:var(--text3)">No data for this period.</p>'; return; }
+
+  el.innerHTML = sorted.map(([name, count], i) => {
+    const initials = name.split(' ').map(p=>p[0]).slice(0,2).join('').toUpperCase();
+    const bar = sorted[0][1] > 0 ? Math.round((count/sorted[0][1])*100) : 0;
+    return `<div class="tech-row">
+      <div style="font-size:12px;font-weight:700;color:var(--text3);width:16px">${i+1}</div>
+      <div class="tech-avatar">${initials}</div>
+      <div style="flex:1;min-width:0">
+        <div class="tech-name">${name}</div>
+        <div class="prog-bar"><div class="prog-fill blue" style="width:${bar}%"></div></div>
+      </div>
+      <div class="tech-count">${count}</div>
+    </div>`;
+  }).join('');
+}
+
+// Bait usage bar chart — uses real bait product names, shortened for display
+function renderBaitChart(data) {
+  const BAIT_SHORT = {
+    'Pulse – Brodifacoum 0,05 g/kg':    'Pulse',
+    'Jaguar – Brodifacoum 0,05 g/kg':   'Jaguar',
+    'Coopers – Flocoumafen 0,05 g/kg':  'Coopers',
+    'Fly Glue Trap':                     'Fly Glue',
+  };
+  const BAIT_COLORS = ['#2dd4a7','#0f4c81','#8b5cf6','#f97316'];
+
+  const baits = {};
+  data.filter(r => r.bait_applied && r.bait_applied !== 'None' && r.bait_applied !== '').forEach(r => {
+    const key = r.bait_applied;
+    baits[key] = (baits[key]||0) + 1;
+  });
+  const sorted = Object.entries(baits).sort((a,b) => b[1]-a[1]);
+  const labels = sorted.map(e => BAIT_SHORT[e[0]] || e[0]);
+  const counts = sorted.map(e => e[1]);
+  const colors = sorted.map((_,i) => BAIT_COLORS[i % BAIT_COLORS.length]);
+  const fullNames = sorted.map(e => e[0]);
+
+  destroyChart('chart-bait');
+  const ctx = document.getElementById('chart-bait').getContext('2d');
+  _charts['chart-bait'] = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: labels.length ? labels : ['No bait applied'],
+      datasets: [{ label: 'Applications', data: counts.length ? counts : [0], backgroundColor: colors, borderRadius: 6, borderSkipped: false }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: { title: (items) => fullNames[items[0].dataIndex] || items[0].label } }
+      },
+      scales: {
+        y: { beginAtZero: true, ticks: { precision: 0, font: { family: 'DM Sans', size: 11 } }, grid: { color: 'rgba(0,0,0,0.05)' } },
+        x: { ticks: { font: { family: 'DM Sans', size: 11 } }, grid: { display: false } }
+      }
+    }
+  });
+}
+
+// Alerts list — maps real condition codes to severity levels
+function renderAlerts(data) {
+  const el = document.getElementById('alerts-list');
+  const alerts = [];
+
+  const ALERT_MAP = [
+    { condition: 'Station missing – SM',         level: 'red',  icon: 'ti-map-pin-off' },
+    { condition: 'Station Damaged – SD',          level: 'red',  icon: 'ti-alert-triangle' },
+    { condition: 'Bait station blocked – BKD',    level: 'red',  icon: 'ti-lock' },
+    { condition: 'Rodent activity Rebaited- RR',  level: 'warn', icon: 'ti-bug' },
+    { condition: 'Mouldy Rebaited – MR',          level: 'warn', icon: 'ti-droplet-off' },
+    { condition: 'Bait dusty replaced – DU',      level: 'warn', icon: 'ti-wind' },
+    { condition: 'Station Replaced –SR',          level: 'warn', icon: 'ti-replace' },
+  ];
+
+  ALERT_MAP.forEach(({ condition, level }) => {
+    data.filter(r => r.condition === condition).forEach(r =>
+      alerts.push({ level, text: `<strong>${r.unit_label}</strong> at ${r.site_name} — ${r.location_name}: ${condition}`, meta: `${r.tech} · ${r.tech_date}` }));
+  });
+  data.filter(r => r.barcode_match === false).forEach(r =>
+    alerts.push({ level:'warn', text: `Barcode mismatch on <strong>${r.unit_label}</strong> — scanned ${r.scanned_barcode}, expected ${r.expected_barcode}`, meta: `${r.tech} · ${r.tech_date}` }));
+
+  if (!alerts.length) {
+    el.innerHTML = '<div style="text-align:center;padding:24px 0;color:var(--success)"><i class="ti ti-circle-check" style="font-size:28px;display:block;margin-bottom:8px"></i><p style="font-size:13px;font-weight:500">No issues in this period</p></div>';
+    return;
+  }
+
+  el.innerHTML = alerts.slice(0,8).map(a => `
+    <div class="alert-item">
+      <div class="alert-dot ${a.level}"></div>
+      <div>
+        <div class="alert-text">${a.text}</div>
+        <div class="alert-meta">${a.meta}</div>
+      </div>
+    </div>`).join('');
+
+  if (alerts.length > 8) {
+    el.innerHTML += `<p style="font-size:12px;color:var(--text3);padding-top:8px;text-align:center">+ ${alerts.length-8} more — see Inspections tab</p>`;
+  }
+}
+
+// Unit type pie
+function renderTypeChart(data) {
+  const bait = data.filter(r => r.unit_type === 'bait').length;
+  const fly  = data.filter(r => r.unit_type === 'fly').length;
+  const colors = ['#2dd4a7','#0f4c81'];
+
+  destroyChart('chart-type');
+  const ctx = document.getElementById('chart-type').getContext('2d');
+  _charts['chart-type'] = new Chart(ctx, {
+    type: 'doughnut',
+    data: { labels: ['Bait boxes','Fly units'], datasets: [{ data: [bait, fly], backgroundColor: colors, borderWidth: 2, borderColor: '#fff' }] },
+    options: { responsive: true, plugins: { legend: { display: false } }, cutout: '65%' }
+  });
+
+  const total = bait + fly;
+  document.getElementById('type-legend').innerHTML = [['Bait boxes',bait,colors[0]],['Fly units',fly,colors[1]]].map(([label,count,color]) =>
+    `<div style="display:flex;align-items:center;gap:5px;font-size:12px;font-weight:500">
+      <span style="width:10px;height:10px;border-radius:50%;background:${color};flex-shrink:0"></span>
+      ${label} <span style="color:var(--text3);font-weight:400">${total ? Math.round(count/total*100) : 0}%</span>
+    </div>`).join('');
+}
+
+function destroyChart(id) {
+  if (_charts[id]) { _charts[id].destroy(); delete _charts[id]; }
+}
+function destroyCharts() {
+  Object.keys(_charts).forEach(destroyChart);
+}
+
+// ── SITES ──────────────────────────────────────────────────────────
 async function loadSites() {
   try {
     const [sites, locations, units] = await Promise.all([
@@ -522,32 +987,26 @@ async function loadSites() {
       sb('pt_units?select=*&order=label'),
     ]);
     const locMap = {};
-    locations.forEach(l => { locMap[l.id] = { ...l, units: [] }; });
-    units.forEach(u => { if (locMap[u.location_id]) locMap[u.location_id].units.push(u); });
-    _sites = sites.map(s => ({ ...s, locations: locations.filter(l => l.site_id === s.id).map(l => locMap[l.id]) }));
+    (locations||[]).forEach(l => { locMap[l.id] = { ...l, units: [] }; });
+    (units||[]).forEach(u => { if (locMap[u.location_id]) locMap[u.location_id].units.push(u); });
+    _sites = (sites||[]).map(s => ({ ...s, locations: (locations||[]).filter(l => l.site_id === s.id).map(l => locMap[l.id]) }));
     renderSiteTree();
-    document.getElementById('s-sites').textContent = _sites.length;
-    const total = _sites.reduce((a,s) => a + s.locations.reduce((b,l) => b + l.units.length, 0), 0);
-    document.getElementById('s-units').textContent = total;
   } catch(e) { toast('Failed to load sites: ' + e.message, 'error'); }
 }
 
 function renderSiteTree() {
   const tree = document.getElementById('site-tree');
-  if (!_sites.length) { tree.innerHTML = '<p style="color:var(--text3);font-size:13px">No sites yet.</p>'; return; }
+  if (!_sites.length) { tree.innerHTML = '<div class="empty"><i class="ti ti-building-skyscraper"></i><p>No sites yet. Add one above.</p></div>'; return; }
   tree.innerHTML = _sites.map(site => `
     <div class="tree-site">
       <div class="tree-site-hd">
         <div class="site-icon"><i class="ti ti-building-skyscraper"></i></div>
-        <div class="site-info">
-          <div class="site-name">${site.name}</div>
-          <div class="site-addr">${site.address || ''}</div>
-        </div>
+        <div class="site-info"><div class="site-name">${site.name}</div><div class="site-addr">${site.address||''}</div></div>
         <button class="btn btn-ghost btn-sm" onclick="openAddLoc('${site.id}')"><i class="ti ti-plus"></i> Location</button>
         <button class="btn btn-danger btn-sm" style="margin-left:6px" onclick="deleteSite('${site.id}','${site.name}')"><i class="ti ti-trash"></i></button>
       </div>
       <div class="tree-locs">
-        ${site.locations.map(loc => `
+        ${(site.locations||[]).map(loc => `
           <div class="tree-loc">
             <div class="tree-loc-hd">
               <i class="ti ${loc.icon||'ti-map-pin'}"></i>
@@ -556,7 +1015,7 @@ function renderSiteTree() {
               <button class="btn btn-danger btn-sm" style="margin-left:6px" onclick="deleteLoc('${loc.id}','${loc.name}')"><i class="ti ti-x"></i></button>
             </div>
             <div class="tree-units">
-              ${loc.units.map(u => `
+              ${(loc.units||[]).map(u => `
                 <div class="tree-unit">
                   <div class="unit-info">
                     <div class="unit-label">${u.label} <span class="tag ${u.unit_type}">${u.unit_type==='bait'?'Bait':'Fly'}</span></div>
@@ -564,62 +1023,56 @@ function renderSiteTree() {
                   </div>
                   <button class="btn btn-danger btn-sm" onclick="deleteUnit('${u.id}','${u.label}')"><i class="ti ti-trash"></i></button>
                 </div>`).join('')}
-              ${loc.units.length===0?`<p style="font-size:12px;color:var(--text3);padding:4px 8px">No units — add one above.</p>`:''}
+              ${!(loc.units||[]).length ? `<p style="font-size:12px;color:var(--text3);padding:4px 8px">No units — add one above.</p>` : ''}
             </div>
           </div>`).join('')}
-        ${site.locations.length===0?`<p style="font-size:12px;color:var(--text3);padding:4px">No locations — add one above.</p>`:''}
+        ${!(site.locations||[]).length ? `<p style="font-size:12px;color:var(--text3);padding:4px">No locations yet.</p>` : ''}
       </div>
     </div>`).join('');
 }
 
-let _addLocSiteId = null, _addUnitLocId = null;
-function openAddLoc(siteId) { _addLocSiteId = siteId; openModal('modal-add-loc'); }
-function openAddUnit(siteId, locId) { _addUnitLocId = locId; openModal('modal-add-unit'); }
+let _addLocSiteId=null, _addUnitLocId=null;
+function openAddLoc(siteId)       { _addLocSiteId = siteId; openModal('modal-add-loc'); }
+function openAddUnit(siteId,locId){ _addUnitLocId = locId;  openModal('modal-add-unit'); }
 
 async function addSite() {
   const name = document.getElementById('ms-name').value.trim();
   const addr = document.getElementById('ms-addr').value.trim();
   if (!name) { toast('Name required', 'error'); return; }
   try {
-    await sb('pt_sites', { method:'POST', prefer:'return=minimal', body: JSON.stringify({ name, address: addr }) });
+    await sb('pt_sites', { method:'POST', body: JSON.stringify({ name, address: addr }) });
     closeModal('modal-add-site');
     document.getElementById('ms-name').value = '';
     document.getElementById('ms-addr').value = '';
-    toast('Site added', 'success');
-    await loadSites();
+    toast('Site added', 'success'); await loadSites();
   } catch(e) { toast('Error: ' + e.message, 'error'); }
 }
-
 async function addLocation() {
   const name = document.getElementById('ml-name').value.trim();
   const icon = document.getElementById('ml-icon').value;
   if (!name) { toast('Name required', 'error'); return; }
   try {
-    await sb('pt_locations', { method:'POST', prefer:'return=minimal', body: JSON.stringify({ name, icon, site_id: _addLocSiteId }) });
+    await sb('pt_locations', { method:'POST', body: JSON.stringify({ name, icon, site_id: _addLocSiteId }) });
     closeModal('modal-add-loc');
     document.getElementById('ml-name').value = '';
-    toast('Location added', 'success');
-    await loadSites();
+    toast('Location added', 'success'); await loadSites();
   } catch(e) { toast('Error: ' + e.message, 'error'); }
 }
-
 async function addUnit() {
   const label   = document.getElementById('mu-label').value.trim();
   const barcode = document.getElementById('mu-barcode').value.trim();
   const type    = document.getElementById('mu-type').value;
   if (!label || !barcode) { toast('Label and barcode required', 'error'); return; }
   try {
-    await sb('pt_units', { method:'POST', prefer:'return=minimal', body: JSON.stringify({ label, barcode, unit_type: type, location_id: _addUnitLocId }) });
+    await sb('pt_units', { method:'POST', body: JSON.stringify({ label, barcode, unit_type: type, location_id: _addUnitLocId }) });
     closeModal('modal-add-unit');
     document.getElementById('mu-label').value = '';
     document.getElementById('mu-barcode').value = '';
-    toast('Unit added', 'success');
-    await loadSites();
+    toast('Unit added', 'success'); await loadSites();
   } catch(e) { toast('Error: ' + e.message, 'error'); }
 }
-
 async function deleteSite(id, name) {
-  confirmAction('Delete "' + name + '"?', 'This will also delete all locations and units under this site. Inspection records are kept.', async () => {
+  confirmAction('Delete "'+name+'"?', 'This removes all locations and units under it. Inspection records are kept.', async () => {
     try {
       await sb(`pt_units?location_id=in.(select id from pt_locations where site_id=eq.${id})`, { method:'DELETE' });
       await sb(`pt_locations?site_id=eq.${id}`, { method:'DELETE' });
@@ -628,9 +1081,8 @@ async function deleteSite(id, name) {
     } catch(e) { toast('Error: ' + e.message, 'error'); }
   });
 }
-
 async function deleteLoc(id, name) {
-  confirmAction('Delete "' + name + '"?', 'All units in this location will also be removed.', async () => {
+  confirmAction('Delete "'+name+'"?', 'All units in this location will be removed.', async () => {
     try {
       await sb(`pt_units?location_id=eq.${id}`, { method:'DELETE' });
       await sb(`pt_locations?id=eq.${id}`, { method:'DELETE' });
@@ -638,9 +1090,8 @@ async function deleteLoc(id, name) {
     } catch(e) { toast('Error: ' + e.message, 'error'); }
   });
 }
-
 async function deleteUnit(id, name) {
-  confirmAction('Delete "' + name + '"?', 'The unit will be removed. Historical inspection records are kept.', async () => {
+  confirmAction('Delete "'+name+'"?', 'Historical records are kept.', async () => {
     try {
       await sb(`pt_units?id=eq.${id}`, { method:'DELETE' });
       toast('Unit deleted', 'success'); await loadSites();
@@ -648,41 +1099,36 @@ async function deleteUnit(id, name) {
   });
 }
 
-// ── TECHNICIANS ────────────────────────────────────────────────────────────────
+// ── TECHNICIANS ────────────────────────────────────────────────────
 async function loadTechs() {
   try {
-    _techs = await sb('pt_technicians?select=*&order=name');
+    _techs = await sb('pt_technicians?select=*&order=name') || [];
     renderTechTable();
-    document.getElementById('s-techs').textContent = _techs.length;
   } catch(e) { toast('Failed to load technicians: ' + e.message, 'error'); }
 }
-
 function renderTechTable() {
-  const tbody = document.getElementById('tech-tbody');
-  tbody.innerHTML = _techs.map(t => `
+  document.getElementById('tech-tbody').innerHTML = _techs.map(t => `
     <tr>
       <td style="font-weight:500">${t.name}</td>
       <td><span style="background:var(--brand-pale);color:var(--brand);padding:3px 9px;border-radius:20px;font-size:12px;font-weight:600">${t.initials}</span></td>
       <td style="color:var(--text3)">${t.created_at ? new Date(t.created_at).toLocaleDateString('en-ZA') : '—'}</td>
       <td><button class="btn btn-danger btn-sm" onclick="deleteTech('${t.id}','${t.name}')"><i class="ti ti-trash"></i></button></td>
-    </tr>`).join('') || '<tr><td colspan="4" style="color:var(--text3)">No technicians yet.</td></tr>';
+    </tr>`).join('') || '<tr><td colspan="4" style="color:var(--text3);text-align:center;padding:20px">No technicians yet.</td></tr>';
 }
-
 async function addTech() {
   const name = document.getElementById('new-tech-name').value.trim();
   let initials = document.getElementById('new-tech-initials').value.trim().toUpperCase();
   if (!name) { toast('Name required', 'error'); return; }
-  if (!initials) initials = name.split(' ').map(p => p[0]).slice(0,2).join('').toUpperCase();
+  if (!initials) initials = name.split(' ').map(p=>p[0]).slice(0,2).join('').toUpperCase();
   try {
-    await sb('pt_technicians', { method:'POST', prefer:'return=minimal', body: JSON.stringify({ name, initials }) });
+    await sb('pt_technicians', { method:'POST', body: JSON.stringify({ name, initials }) });
     document.getElementById('new-tech-name').value = '';
     document.getElementById('new-tech-initials').value = '';
     toast('Technician added', 'success'); await loadTechs();
   } catch(e) { toast('Error: ' + e.message, 'error'); }
 }
-
 async function deleteTech(id, name) {
-  confirmAction('Remove "' + name + '"?', 'They will no longer appear on the field app sign-in screen.', async () => {
+  confirmAction('Remove "'+name+'"?', 'They will no longer appear on the field app sign-in screen.', async () => {
     try {
       await sb(`pt_technicians?id=eq.${id}`, { method:'DELETE' });
       toast('Technician removed', 'success'); await loadTechs();
@@ -690,78 +1136,59 @@ async function deleteTech(id, name) {
   });
 }
 
-// ── DASHBOARD ───────────────────────────────────────────────────────────────────
-async function loadDashboard() {
-  try {
-    const today = new Date().toISOString().slice(0,10);
-    const rows  = await sb(`pest_inspections?tech_date=eq.${today}&select=*&order=timestamp.desc&limit=50`);
-    document.getElementById('s-today').textContent = rows.length;
-    const tbl = document.getElementById('today-table');
-    if (!rows.length) { tbl.innerHTML = '<p style="font-size:13px;color:var(--text3)">No inspections recorded today.</p>'; return; }
-    tbl.innerHTML = `<div class="table-wrap"><table>
-      <thead><tr><th>Time</th><th>Tech</th><th>Site</th><th>Unit</th><th>Condition</th><th>Barcode</th></tr></thead>
-      <tbody>${rows.map(r => `<tr>
-        <td class="mono">${new Date(r.timestamp).toLocaleTimeString('en-ZA',{hour:'2-digit',minute:'2-digit'})}</td>
-        <td>${r.tech}</td><td>${r.site_name}</td><td>${r.unit_label}</td>
-        <td><span class="tag ${r.condition==='Good'?'ok':r.condition==='Damaged'||r.condition==='Tampered'?'danger':'warn'}">${r.condition}</span></td>
-        <td><span class="tag ${r.barcode_match?'ok':'danger'}">${r.barcode_match?'Match':'Mismatch'}</span></td>
-      </tr>`).join('')}</tbody></table></div>`;
-  } catch(e) { console.warn(e); }
-}
-
-// ── INSPECTIONS ─────────────────────────────────────────────────────────────────
-let _inspPage = 0;
-const PAGE_SIZE = 50;
-
+// ── INSPECTIONS TABLE ──────────────────────────────────────────────
 function populateFilterDropdowns() {
   const fs = document.getElementById('filter-site');
   const ft = document.getElementById('filter-tech');
-  _sites.forEach(s => { const o = document.createElement('option'); o.value = s.name; o.textContent = s.name; fs.appendChild(o); });
-  _techs.forEach(t => { const o = document.createElement('option'); o.value = t.name; o.textContent = t.name; ft.appendChild(o); });
+  _sites.forEach(s => { const o = document.createElement('option'); o.value=s.name; o.textContent=s.name; fs.appendChild(o); });
+  _techs.forEach(t => { const o = document.createElement('option'); o.value=t.name; o.textContent=t.name; ft.appendChild(o); });
 }
-
 async function loadInspections() {
   const date = document.getElementById('filter-date').value;
   const site = document.getElementById('filter-site').value;
   const tech = document.getElementById('filter-tech').value;
-  let q = `pest_inspections?select=*&order=timestamp.desc&limit=${PAGE_SIZE}&offset=${_inspPage * PAGE_SIZE}`;
+  const cond = document.getElementById('filter-cond').value;
+  let q = 'pest_inspections?select=*&order=timestamp.desc&limit=200';
   if (date) q += `&tech_date=eq.${date}`;
   if (site) q += `&site_name=eq.${encodeURIComponent(site)}`;
   if (tech) q += `&tech=eq.${encodeURIComponent(tech)}`;
+  if (cond) q += `&condition=eq.${encodeURIComponent(cond)}`;
   try {
-    const rows = await sb(q);
-    const tbody = document.getElementById('inspect-tbody');
-    tbody.innerHTML = rows.map(r => `<tr>
-      <td class="mono">${r.tech_date}</td>
-      <td>${r.tech}</td><td>${r.site_name}</td><td>${r.location_name}</td>
-      <td style="font-weight:500">${r.unit_label}</td>
+    const rows = await sb(q) || [];
+    document.getElementById('inspect-tbody').innerHTML = rows.map(r => `<tr>
+      <td class="mono">${r.tech_date||'—'}</td>
+      <td class="mono" style="color:var(--text3)">${r.timestamp ? new Date(r.timestamp).toLocaleTimeString('en-ZA',{hour:'2-digit',minute:'2-digit'}) : '—'}</td>
+      <td style="font-weight:500">${r.tech||'—'}</td>
+      <td>${r.site_name||'—'}</td>
+      <td>${r.location_name||'—'}</td>
+      <td style="font-weight:500">${r.unit_label||'—'}</td>
       <td><span class="tag ${r.unit_type}">${r.unit_type==='bait'?'Bait':'Fly'}</span></td>
-      <td>${r.inspected}</td>
-      <td><span class="tag ${r.condition==='Good'?'ok':['Damaged','Tampered'].includes(r.condition)?'danger':'warn'}">${r.condition}</span></td>
-      <td><span class="tag ${r.barcode_match?'ok':'danger'} mono">${r.scanned_barcode||'—'}</span></td>
+      <td>${r.inspected||'—'}</td>
+      <td><span class="tag ${r.condition==='Good'?'ok':['Damaged','Tampered'].includes(r.condition)?'danger':'warn'}">${r.condition||'—'}</span></td>
+      <td><span class="tag ${r.barcode_match===false?'danger':'ok'} mono">${r.scanned_barcode||'—'}</span></td>
       <td>${r.bait_applied||'—'}</td>
       <td class="mono">${r.batch_number||'—'}</td>
-      <td style="max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${r.notes||''}</td>
-    </tr>`).join('') || '<tr><td colspan="12" style="color:var(--text3)">No records found.</td></tr>';
-  } catch(e) { toast('Error loading inspections: ' + e.message, 'error'); }
+      <td style="max-width:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--text2)">${r.notes||''}</td>
+    </tr>`).join('') || '<tr><td colspan="13" style="color:var(--text3);text-align:center;padding:24px">No records found.</td></tr>';
+  } catch(e) { toast('Error: ' + e.message, 'error'); }
 }
-
 function clearFilters() {
-  document.getElementById('filter-date').value = '';
-  document.getElementById('filter-site').value = '';
-  document.getElementById('filter-tech').value = '';
+  ['filter-date','filter-site','filter-tech','filter-cond'].forEach(id => {
+    const el = document.getElementById(id);
+    el.tagName === 'SELECT' ? el.selectedIndex = 0 : el.value = '';
+  });
   loadInspections();
 }
 
-// ── EXPORT ───────────────────────────────────────────────────────────────────────
+// ── EXPORT ─────────────────────────────────────────────────────────
 async function exportCSV() {
   try {
-    let q = 'pest_inspections?select=*&order=timestamp.desc&limit=10000';
+    let q = 'pest_inspections?select=*&order=timestamp.desc&limit=50000';
     const from = document.getElementById('exp-from').value;
     const to   = document.getElementById('exp-to').value;
     if (from) q += `&tech_date=gte.${from}`;
     if (to)   q += `&tech_date=lte.${to}`;
-    const rows = await sb(q);
+    const rows = await sb(q) || [];
     if (!rows.length) { toast('No records to export', 'error'); return; }
     const cols = Object.keys(rows[0]);
     const csv  = [cols.join(','), ...rows.map(r => cols.map(c => JSON.stringify(r[c]??'')).join(','))].join('\n');
@@ -769,51 +1196,40 @@ async function exportCSV() {
     toast('CSV downloaded', 'success');
   } catch(e) { toast('Export failed: ' + e.message, 'error'); }
 }
-
 async function exportJSON() {
   try {
-    const rows = await sb('pest_inspections?select=*&order=timestamp.desc&limit=10000');
-    dl('pesttrack_' + new Date().toISOString().slice(0,10) + '.json', JSON.stringify(rows, null, 2), 'application/json');
+    const rows = await sb('pest_inspections?select=*&order=timestamp.desc&limit=50000') || [];
+    dl('pesttrack_' + new Date().toISOString().slice(0,10) + '.json', JSON.stringify(rows,null,2), 'application/json');
     toast('JSON downloaded', 'success');
   } catch(e) { toast('Export failed: ' + e.message, 'error'); }
 }
-
 async function exportConfig() {
-  const payload = { sites: _sites, technicians: _techs, exported: new Date().toISOString() };
-  dl('pesttrack_config_' + new Date().toISOString().slice(0,10) + '.json', JSON.stringify(payload, null, 2), 'application/json');
+  dl('pesttrack_config_' + new Date().toISOString().slice(0,10) + '.json',
+    JSON.stringify({ sites: _sites, technicians: _techs, exported: new Date().toISOString() },null,2), 'application/json');
   toast('Config exported', 'success');
 }
-
 function dl(name, content, mime) {
   const a = document.createElement('a');
   a.href = 'data:' + mime + ';charset=utf-8,' + encodeURIComponent(content);
   a.download = name; a.click();
 }
 
-// ── SETTINGS ─────────────────────────────────────────────────────────────────────
-function populateSettingsSnippet() {
-  const el = document.getElementById('cfg-anon-display');
-  el.addEventListener('input', updateSnippet);
-}
-
+// ── SETTINGS ───────────────────────────────────────────────────────
 function updateSnippet() {
   const anon = document.getElementById('cfg-anon-display').value.trim();
-  const url  = S.url;
   document.getElementById('code-snippet').textContent =
-    `const PREBAKED_URL = '${url}';\nconst PREBAKED_KEY = '${anon}';`;
+    `const PREBAKED_URL = '${S.url}';\nconst PREBAKED_KEY = '${anon}';`;
 }
-
 function copySnippet() {
-  const txt = document.getElementById('code-snippet').textContent;
-  navigator.clipboard.writeText(txt).then(() => toast('Copied to clipboard', 'success'));
+  navigator.clipboard.writeText(document.getElementById('code-snippet').textContent)
+    .then(() => toast('Copied!', 'success'));
 }
-
 async function changePassword() {
   const p1 = document.getElementById('new-pass').value;
   const p2 = document.getElementById('new-pass2').value;
-  if (p1 !== p2) { toast('Passwords do not match', 'error'); return; }
-  if (p1.length < 6) { toast('Minimum 6 characters', 'error'); return; }
-  localStorage.setItem(ADMIN_PASS_HASH_KEY, await sha256(p1));
+  if (p1 !== p2)    { toast('Passwords do not match', 'error'); return; }
+  if (p1.length < 6){ toast('Minimum 6 characters', 'error'); return; }
+  localStorage.setItem(PASS_KEY, await sha256(p1));
   document.getElementById('new-pass').value = '';
   document.getElementById('new-pass2').value = '';
   toast('Password updated', 'success');
