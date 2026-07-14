@@ -623,7 +623,7 @@ async function autoSync() {
   try {
     await sbFetch('pest_inspections', {
       method: 'POST',
-      headers: { 'Prefer': 'return=minimal' },
+      headers: { 'Prefer': 'resolution=merge-duplicates' },
       body: JSON.stringify(batch),
     });
     const ids = new Set(batch.map(r => r.id));
@@ -632,9 +632,10 @@ async function autoSync() {
     updateSyncBanner();
     toast(batch.length + ' record' + (batch.length > 1 ? 's' : '') + ' synced', 'success');
   } catch(e) {
-    console.warn('Sync failed:', e.message);
-    updateSyncBanner();
-  }
+  console.error('Sync failed:', e);
+  toast('Sync failed: ' + e.message, 'error');
+  updateSyncBanner();
+}
 }
 
 async function doSync() {
