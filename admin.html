@@ -570,6 +570,7 @@ function adminSignOut() {
 async function sb(path, opts = {}) {
   const res = await fetch(S.url + '/rest/v1/' + path, {
     ...opts,
+    cache: 'no-store',
     headers: {
       'Content-Type': 'application/json',
       'apikey': S.key,
@@ -988,7 +989,11 @@ async function loadSites() {
     ]);
     const locMap = {};
     (locations||[]).forEach(l => { locMap[l.id] = { ...l, units: [] }; });
-    (units||[]).forEach(u => { if (locMap[u.location_id]) locMap[u.location_id].units.push(u); });
+    _orphanUnits = [];
+    (units||[]).forEach(u => {
+      if (locMap[u.location_id]) locMap[u.location_id].units.push(u);
+      else _orphanUnits.push(u);
+    });
     _sites = (sites||[]).map(s => ({ ...s, locations: (locations||[]).filter(l => l.site_id === s.id).map(l => locMap[l.id]) }));
     renderSiteTree();
   } catch(e) { toast('Failed to load sites: ' + e.message, 'error'); }
@@ -996,8 +1001,32 @@ async function loadSites() {
 
 function renderSiteTree() {
   const tree = document.getElementById('site-tree');
-  if (!_sites.length) { tree.innerHTML = '<div class="empty"><i class="ti ti-building-skyscraper"></i><p>No sites yet. Add one above.</p></div>'; return; }
-  tree.innerHTML = _sites.map(site => `
+  const orphanHtml = _orphanUnits.length ? `
+    <div class="tree-site" style="border:1px solid var(--danger,#e5484d);background:rgba(229,72,77,0.06)">
+      <div class="tree-site-hd">
+        <div class="site-icon" style="background:var(--danger,#e5484d)"><i class="ti ti-alert-triangle"></i></div>
+        <div class="site-info">
+          <div class="site-name">Unassigned units (${_orphanUnits.length})</div>
+          <div class="site-addr">These units exist in the database but have no matching location — that's why they weren't showing up. Reassign or delete them below.</div>
+        </div>
+      </div>
+      <div class="tree-units">
+        ${_orphanUnits.map(u => `
+          <div class="tree-unit">
+            <div class="unit-info">
+              <div class="unit-label">${u.label} <span class="tag ${u.unit_type}">${u.unit_type==='bait'?'Bait':'Fly'}</span></div>
+              <div class="unit-bc">${u.barcode} &middot; location_id: ${u.location_id || '(none)'}</div>
+            </div>
+            <select onchange="reassignUnit('${u.id}', this.value)" style="margin-right:6px">
+              <option value="">Reassign to…</option>
+              ${_sites.flatMap(s => (s.locations||[]).map(l => `<option value="${l.id}">${s.name} / ${l.name}</option>`)).join('')}
+            </select>
+            <button class="btn btn-danger btn-sm" onclick="deleteUnit('${u.id}','${u.label}')"><i class="ti ti-trash"></i></button>
+          </div>`).join('')}
+      </div>
+    </div>` : '';
+  if (!_sites.length && !_orphanUnits.length) { tree.innerHTML = '<div class="empty"><i class="ti ti-building-skyscraper"></i><p>No sites yet. Add one above.</p></div>'; return; }
+  tree.innerHTML = orphanHtml + _sites.map(site => `
     <div class="tree-site">
       <div class="tree-site-hd">
         <div class="site-icon"><i class="ti ti-building-skyscraper"></i></div>
@@ -1031,7 +1060,7 @@ function renderSiteTree() {
     </div>`).join('');
 }
 
-let _addLocSiteId=null, _addUnitLocId=null;
+let _addLocSiteId=null, _addUnitLocId=null, _orphanUnits=[];
 function openAddLoc(siteId)       { _addLocSiteId = siteId; openModal('modal-add-loc'); }
 function openAddUnit(siteId,locId){ _addUnitLocId = locId;  openModal('modal-add-unit'); }
 
@@ -1063,6 +1092,7 @@ async function addUnit() {
   const barcode = document.getElementById('mu-barcode').value.trim();
   const type    = document.getElementById('mu-type').value;
   if (!label || !barcode) { toast('Label and barcode required', 'error'); return; }
+  if (!_addUnitLocId) { toast('No location selected — close this and click "+ Unit" from a location row', 'error'); return; }
   try {
     await sb('pt_units', { method:'POST', body: JSON.stringify({ label, barcode, unit_type: type, location_id: _addUnitLocId }) });
     closeModal('modal-add-unit');
@@ -1089,6 +1119,13 @@ async function deleteLoc(id, name) {
       toast('Location deleted', 'success'); await loadSites();
     } catch(e) { toast('Error: ' + e.message, 'error'); }
   });
+}
+async function reassignUnit(id, newLocId) {
+  if (!newLocId) return;
+  try {
+    await sb(`pt_units?id=eq.${id}`, { method:'PATCH', body: JSON.stringify({ location_id: newLocId }) });
+    toast('Unit reassigned', 'success'); await loadSites();
+  } catch(e) { toast('Error: ' + e.message, 'error'); }
 }
 async function deleteUnit(id, name) {
   confirmAction('Delete "'+name+'"?', 'Historical records are kept.', async () => {
