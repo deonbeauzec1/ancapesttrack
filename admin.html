@@ -362,7 +362,9 @@ textarea{resize:vertical;min-height:80px}
           <div><div class="page-title">Sites &amp; Units</div>
           <div class="page-sub">Manage the site → location → unit hierarchy. Changes sync to all field devices instantly.</div></div>
           <button class="btn btn-primary" onclick="openModal('modal-add-site')"><i class="ti ti-plus"></i> Add site</button>
+          <button class="btn btn-ghost" onclick="runDebugDump()" style="margin-left:8px"><i class="ti ti-bug"></i> Debug dump</button>
         </div>
+        <pre id="debug-dump" style="display:none;white-space:pre-wrap;background:#111;color:#0f0;padding:12px;border-radius:8px;font-size:11px;max-height:400px;overflow:auto;margin-bottom:16px"></pre>
         <div class="tree" id="site-tree"><div class="empty"><i class="ti ti-building-skyscraper"></i><p>Loading…</p></div></div>
       </div>
 
@@ -568,7 +570,7 @@ function adminSignOut() {
 
 // ── SUPABASE ───────────────────────────────────────────────────────
 async function sb(path, opts = {}) {
-  console.debug('[sb]', opts.method || 'GET', path);
+  console.log('[sb]', opts.method || 'GET', path);
   const res = await fetch(S.url + '/rest/v1/' + path, {
     ...opts,
     cache: 'no-store',
@@ -981,6 +983,28 @@ function destroyCharts() {
 }
 
 // ── SITES ──────────────────────────────────────────────────────────
+async function runDebugDump() {
+  const el = document.getElementById('debug-dump');
+  el.style.display = 'block';
+  el.textContent = 'Fetching fresh data from Supabase...';
+  try {
+    const [sites, locations, units] = await Promise.all([
+      sb('pt_sites?select=*&order=name'),
+      sb('pt_locations?select=*&order=name'),
+      sb('pt_units?select=*&order=label'),
+    ]);
+    const stutt = (units||[]).find(u => u.label === 'ST-1');
+    const stuttLoc = (locations||[]).find(l => l.id === '01d23d11-a061-4c33-8ad9-a38cd3e59099');
+    const summary = {
+      counts: { sites: (sites||[]).length, locations: (locations||[]).length, units: (units||[]).length },
+      'ST-1 unit as fetched right now': stutt || 'NOT IN THE FETCHED LIST',
+      'location 01d23d11 as fetched right now': stuttLoc || 'NOT IN THE FETCHED LIST',
+    };
+    el.textContent = JSON.stringify(summary, null, 2);
+  } catch(e) {
+    el.textContent = 'ERROR: ' + e.message;
+  }
+}
 async function loadSites() {
   try {
     const [sites, locations, units] = await Promise.all([
@@ -988,9 +1012,9 @@ async function loadSites() {
       sb('pt_locations?select=*&order=name'),
       sb('pt_units?select=*&order=label'),
     ]);
-    console.debug('[loadSites] raw sites', sites);
-    console.debug('[loadSites] raw locations', locations);
-    console.debug('[loadSites] raw units', units);
+    console.log('[loadSites] raw sites', sites);
+    console.log('[loadSites] raw locations', locations);
+    console.log('[loadSites] raw units', units);
     const locMap = {};
     (locations||[]).forEach(l => { locMap[l.id] = { ...l, units: [] }; });
     _orphanUnits = [];
@@ -999,8 +1023,8 @@ async function loadSites() {
       else _orphanUnits.push(u);
     });
     _sites = (sites||[]).map(s => ({ ...s, locations: (locations||[]).filter(l => l.site_id === s.id).map(l => locMap[l.id]) }));
-    console.debug('[loadSites] built _sites', JSON.parse(JSON.stringify(_sites)));
-    console.debug('[loadSites] orphans', _orphanUnits);
+    console.log('[loadSites] built _sites', JSON.parse(JSON.stringify(_sites)));
+    console.log('[loadSites] orphans', _orphanUnits);
     renderSiteTree();
   } catch(e) { toast('Failed to load sites: ' + e.message, 'error'); console.error('[loadSites] error', e); }
 }
@@ -1110,7 +1134,11 @@ async function addUnit() {
 async function deleteSite(id, name) {
   confirmAction('Delete "'+name+'"?', 'This removes all locations and units under it. Inspection records are kept.', async () => {
     try {
-      await sb(`pt_units?location_id=in.(select id from pt_locations where site_id=eq.${id})`, { method:'DELETE' });
+      const locs = await sb(`pt_locations?site_id=eq.${id}&select=id`);
+      const locIds = (locs||[]).map(l => l.id);
+      if (locIds.length) {
+        await sb(`pt_units?location_id=in.(${locIds.join(',')})`, { method:'DELETE' });
+      }
       await sb(`pt_locations?site_id=eq.${id}`, { method:'DELETE' });
       await sb(`pt_sites?id=eq.${id}`, { method:'DELETE' });
       toast('Site deleted', 'success'); await loadSites();
@@ -1278,6 +1306,6 @@ async function changePassword() {
   toast('Password updated', 'success');
 }
 </script>
-<div style="position:fixed;bottom:4px;right:8px;font-size:10px;color:#999;z-index:9999;font-family:monospace">build:2026-07-21-orphanfix</div>
+<div style="position:fixed;bottom:4px;right:8px;font-size:10px;color:#999;z-index:9999;font-family:monospace">build:2026-07-21-debugdump</div>
 </body>
 </html>
