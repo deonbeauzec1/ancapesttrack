@@ -568,6 +568,7 @@ function adminSignOut() {
 
 // ── SUPABASE ───────────────────────────────────────────────────────
 async function sb(path, opts = {}) {
+  console.debug('[sb]', opts.method || 'GET', path);
   const res = await fetch(S.url + '/rest/v1/' + path, {
     ...opts,
     cache: 'no-store',
@@ -987,6 +988,9 @@ async function loadSites() {
       sb('pt_locations?select=*&order=name'),
       sb('pt_units?select=*&order=label'),
     ]);
+    console.debug('[loadSites] raw sites', sites);
+    console.debug('[loadSites] raw locations', locations);
+    console.debug('[loadSites] raw units', units);
     const locMap = {};
     (locations||[]).forEach(l => { locMap[l.id] = { ...l, units: [] }; });
     _orphanUnits = [];
@@ -995,8 +999,10 @@ async function loadSites() {
       else _orphanUnits.push(u);
     });
     _sites = (sites||[]).map(s => ({ ...s, locations: (locations||[]).filter(l => l.site_id === s.id).map(l => locMap[l.id]) }));
+    console.debug('[loadSites] built _sites', JSON.parse(JSON.stringify(_sites)));
+    console.debug('[loadSites] orphans', _orphanUnits);
     renderSiteTree();
-  } catch(e) { toast('Failed to load sites: ' + e.message, 'error'); }
+  } catch(e) { toast('Failed to load sites: ' + e.message, 'error'); console.error('[loadSites] error', e); }
 }
 
 function renderSiteTree() {
@@ -1272,5 +1278,6 @@ async function changePassword() {
   toast('Password updated', 'success');
 }
 </script>
+<div style="position:fixed;bottom:4px;right:8px;font-size:10px;color:#999;z-index:9999;font-family:monospace">build:2026-07-21-orphanfix</div>
 </body>
 </html>
