@@ -111,7 +111,7 @@ textarea{resize:none}
   </div>
   <div class="body">
     <div id="setup-warning" class="setup-card" style="display:none">
-      <p><strong>Setup required</strong><br>No server connection configured. Contact your supervisor to get the connection URL for this device.</p>
+      <p><strong>Setup required</strong><br>No Supabase connection configured. Contact your supervisor to get the connection URL for this device.</p>
     </div>
     <div id="loading-techs" style="text-align:center;padding:20px;color:var(--text3)">
       <i class="ti ti-loader-2" style="font-size:24px;display:block;margin-bottom:8px"></i>
@@ -204,10 +204,10 @@ textarea{resize:none}
 <script src="https://cdn.jsdelivr.net/npm/@zxing/library@0.21.3/umd/index.min.js"></script>
 <script>
 // ── CONFIG ──────────────────────────────────────────────────────────────────
-// Pre-bake your server URL here when distributing to field devices.
+// Pre-bake your Supabase URL here when distributing to field devices.
 // Leave blank to require first-run setup (not recommended for field devices).
-const PREBAKED_URL = 'http://192.168.0.14:3000';
-const PREBAKED_KEY = '37a1ad66c154c8eb01b8084d3519aaccb784d9d131d725ac50c8817298e62b07';
+const PREBAKED_URL = 'https://rmgdywekbtsxinmnxtui.supabase.co';
+const PREBAKED_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJtZ2R5d2VrYnRzeGlubW54dHVpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1NTUzNTYsImV4cCI6MjA5NjEzMTM1Nn0.bXfyArmEfy0_EzMsXM_tfttdBnPDKsFHhisg3a57QyA';
 const DB = {
   get url()     { return PREBAKED_URL || localStorage.getItem('pt_url') || ''; },
   get anonKey() { return PREBAKED_KEY || localStorage.getItem('pt_anon_key') || ''; },
@@ -247,24 +247,6 @@ async function sbFetch(path, opts = {}) {
   return text ? JSON.parse(text) : null;
 }
 
-// Fetches ALL rows for a GET query, paging past PostgREST's default
-// 1000-row-per-request cap so large tables (e.g. pt_units) never get
-// silently truncated on field devices either.
-async function sbFetchAll(path) {
-  const PAGE = 1000;
-  let offset = 0;
-  let all = [];
-  while (true) {
-    const sep = path.includes('?') ? '&' : '?';
-    const page = await sbFetch(`${path}${sep}limit=${PAGE}&offset=${offset}`);
-    if (!page || !page.length) break;
-    all = all.concat(page);
-    if (page.length < PAGE) break; // last page
-    offset += PAGE;
-  }
-  return all;
-}
-
 async function loadRemoteData() {
   if (!DB.url || !DB.anonKey) {
     document.getElementById('setup-warning').style.display = 'block';
@@ -274,10 +256,10 @@ async function loadRemoteData() {
   try {
     // Fetch sites + locations + units joined
     const [sites, locations, units, techs] = await Promise.all([
-      sbFetchAll('pt_sites?select=*&order=name'),
-      sbFetchAll('pt_locations?select=*&order=name'),
-      sbFetchAll('pt_units?select=*&order=label'),
-      sbFetchAll('pt_technicians?select=*&order=name'),
+      sbFetch('pt_sites?select=*&order=name'),
+      sbFetch('pt_locations?select=*&order=name'),
+      sbFetch('pt_units?select=*&order=label'),
+      sbFetch('pt_technicians?select=*&order=name'),
     ]);
     // Nest locations into sites, units into locations
     const locMap = {};
