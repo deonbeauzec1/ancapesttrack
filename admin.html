@@ -216,11 +216,11 @@ textarea{resize:vertical;min-height:80px}
   <div class="auth-box">
     <div class="auth-logo"><i class="ti ti-bug"></i><span>PestTrack Admin</span></div>
     <h2 style="font-size:17px;font-weight:600">Sign in</h2>
-    <div class="field"><label>Supabase project URL</label>
-      <input type="url" id="a-url" placeholder="https://xxxx.supabase.co" autocomplete="off">
+    <div class="field"><label>Server URL</label>
+      <input type="url" id="a-url" placeholder="http://192.168.0.14:3000" autocomplete="off">
     </div>
-    <div class="field"><label>Service role key</label>
-      <input type="password" id="a-key" placeholder="eyJhbGci…" autocomplete="off">
+    <div class="field"><label>Admin key</label>
+      <input type="password" id="a-key" placeholder="ADMIN_API_KEY from .env" autocomplete="off">
     </div>
     <div class="field"><label>Admin password</label>
       <input type="password" id="a-pass" placeholder="Your admin password" autocomplete="off"
@@ -229,7 +229,7 @@ textarea{resize:vertical;min-height:80px}
     <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="doAdminLogin()">
       <i class="ti ti-login"></i> Sign in
     </button>
-    <p style="font-size:11px;color:var(--text3)">Credentials stored in session only — never sent anywhere except your Supabase project.</p>
+    <p style="font-size:11px;color:var(--text3)">Credentials stored in session only — never sent anywhere except your PestTrack server.</p>
   </div>
 </div>
 
@@ -402,7 +402,7 @@ textarea{resize:vertical;min-height:80px}
           <div class="field" style="flex:1;min-width:140px"><label>Technician</label>
             <select id="filter-tech" onchange="loadInspections()"><option value="">All technicians</option></select></div>
           <div class="field" style="flex:1;min-width:120px"><label>Condition</label>
-            <select id="filter-cond" onchange="loadInspections()"><option value="">All</option><option>Good</option><option>Damaged</option><option>Tampered</option><option>Missing</option></select></div>
+            <select id="filter-cond" onchange="loadInspections()"><option value="">All</option><option>Inspected and Checked – OK</option><option>Station Damaged – SD</option><option>Station missing – SM</option><option>Rodent activity Rebaited- RR</option><option>Mouldy Rebaited – MR</option><option>Bait dusty replaced – DU</option><option>Bait station blocked – BKD</option><option>Station Replaced –SR</option></select></div>
           <button class="btn btn-ghost btn-sm" onclick="clearFilters()"><i class="ti ti-x"></i> Clear</button>
         </div>
         <div class="table-wrap">
@@ -544,7 +544,7 @@ async function doAdminLogin() {
   const url  = document.getElementById('a-url').value.trim().replace(/\/+$/, '');
   const key  = document.getElementById('a-key').value.trim();
   const pass = document.getElementById('a-pass').value;
-  if (!url || !key) { toast('Enter Supabase URL and service role key', 'error'); return; }
+  if (!url || !key) { toast('Enter server URL and admin key', 'error'); return; }
   const stored = localStorage.getItem(PASS_KEY);
   if (stored) {
     if (await sha256(pass) !== stored) { toast('Incorrect password', 'error'); return; }
@@ -586,6 +586,25 @@ async function sb(path, opts = {}) {
   const text = await res.text();
   if (!text || !text.trim()) return null;
   try { return JSON.parse(text); } catch { return null; }
+}
+
+// Fetches ALL rows for a GET query, paging past PostgREST's default
+// 1000-row-per-request cap so large tables (e.g. pt_units) never get
+// silently truncated. Only use for GET reads (path must not include a
+// method-changing body).
+async function sbAll(path) {
+  const PAGE = 1000;
+  let offset = 0;
+  let all = [];
+  while (true) {
+    const sep = path.includes('?') ? '&' : '?';
+    const page = await sb(`${path}${sep}limit=${PAGE}&offset=${offset}`);
+    if (!page || !page.length) break;
+    all = all.concat(page);
+    if (page.length < PAGE) break; // last page
+    offset += PAGE;
+  }
+  return all;
 }
 
 // ── NAV ────────────────────────────────────────────────────────────
@@ -986,12 +1005,12 @@ function destroyCharts() {
 async function runDebugDump() {
   const el = document.getElementById('debug-dump');
   el.style.display = 'block';
-  el.textContent = 'Fetching fresh data from Supabase...';
+  el.textContent = 'Fetching fresh data from server...';
   try {
     const [sites, locations, units] = await Promise.all([
-      sb('pt_sites?select=*&order=name'),
-      sb('pt_locations?select=*&order=name'),
-      sb('pt_units?select=*&order=label'),
+      sbAll('pt_sites?select=*&order=name'),
+      sbAll('pt_locations?select=*&order=name'),
+      sbAll('pt_units?select=*&order=label'),
     ]);
     const stutt = (units||[]).find(u => u.label === 'ST-1');
     const stuttLoc = (locations||[]).find(l => l.id === '01d23d11-a061-4c33-8ad9-a38cd3e59099');
@@ -1008,9 +1027,9 @@ async function runDebugDump() {
 async function loadSites() {
   try {
     const [sites, locations, units] = await Promise.all([
-      sb('pt_sites?select=*&order=name'),
-      sb('pt_locations?select=*&order=name'),
-      sb('pt_units?select=*&order=label'),
+      sbAll('pt_sites?select=*&order=name'),
+      sbAll('pt_locations?select=*&order=name'),
+      sbAll('pt_units?select=*&order=label'),
     ]);
     console.log('[loadSites] raw sites', sites);
     console.log('[loadSites] raw locations', locations);
@@ -1235,7 +1254,7 @@ async function loadInspections() {
       <td style="font-weight:500">${r.unit_label||'—'}</td>
       <td><span class="tag ${r.unit_type}">${r.unit_type==='bait'?'Bait':'Fly'}</span></td>
       <td>${r.inspected||'—'}</td>
-      <td><span class="tag ${r.condition==='Good'?'ok':['Damaged','Tampered'].includes(r.condition)?'danger':'warn'}">${r.condition||'—'}</span></td>
+      <td><span class="tag ${r.condition==='Inspected and Checked – OK'?'ok':['Station Damaged – SD','Station missing – SM','Bait station blocked – BKD'].includes(r.condition)?'danger':'warn'}">${r.condition||'—'}</span></td>
       <td><span class="tag ${r.barcode_match===false?'danger':'ok'} mono">${r.scanned_barcode||'—'}</span></td>
       <td>${r.bait_applied||'—'}</td>
       <td class="mono">${r.batch_number||'—'}</td>
@@ -1306,6 +1325,6 @@ async function changePassword() {
   toast('Password updated', 'success');
 }
 </script>
-<div style="position:fixed;bottom:4px;right:8px;font-size:10px;color:#999;z-index:9999;font-family:monospace">build:2026-07-21-debugdump</div>
+<div style="position:fixed;bottom:4px;right:8px;font-size:10px;color:#999;z-index:9999;font-family:monospace">build:2026-10-10-mssql-b</div>
 </body>
 </html>
