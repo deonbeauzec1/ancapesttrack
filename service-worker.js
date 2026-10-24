@@ -1,6 +1,6 @@
 // PestTrack Service Worker — offline-first caching strategy
-const CACHE_NAME = 'pesttrack-v14';
-const RUNTIME_CACHE = 'pesttrack-runtime-v14';
+const CACHE_NAME = 'pesttrack-v15';
+const RUNTIME_CACHE = 'pesttrack-runtime-v15';
 
 // Files to pre-cache on install (app shell)
 const PRECACHE_URLS = [
@@ -41,9 +41,12 @@ self.addEventListener('activate', event => {
 self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);
 
-  // Skip non-GET and Supabase API calls (let those fail gracefully — the app queues them)
+  // Skip non-GET and backend API calls (let those fail gracefully — the app queues them).
+  // Matched by path, not hostname, so this keeps working whether the backend is
+  // Supabase (xxxx.supabase.co/rest/v1/...) or the self-hosted MSSQL middleware
+  // (home-ip:3000/rest/v1/...) — both expose the same /rest/v1/ route shape.
   if (event.request.method !== 'GET') return;
-  if (url.hostname.includes('supabase.co')) return;
+  if (url.pathname.startsWith('/rest/v1/')) return;
 
   // App shell & CDN assets: cache-first
   if (url.pathname === '/' || url.pathname.endsWith('.html') || url.pathname.endsWith('.json') ||
