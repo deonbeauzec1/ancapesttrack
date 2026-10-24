@@ -107,7 +107,7 @@ textarea{resize:none}
 <div id="screen-login" class="screen active">
   <div class="login-header">
     <div class="login-logo"><i class="ti ti-bug"></i><span>PestTrack</span></div>
-    <div class="login-tagline">Field inspection management</div>
+    <div class="login-tagline">Field inspection management · build 2026-10-24b</div>
   </div>
   <div class="body">
     <div id="setup-warning" class="setup-card" style="display:none">
@@ -208,11 +208,12 @@ textarea{resize:none}
 // Leave blank to require first-run setup (not recommended for field devices).
 const PREBAKED_URL = 'http://192.168.0.14:3000';
 const PREBAKED_KEY = '37a1ad66c154c8eb01b8084d3519aaccb784d9d131d725ac50c8817298e62b07';
+var _recMap = null; // today's records by unit id; rebuilt after every change
 const DB = {
   get url()     { return PREBAKED_URL || localStorage.getItem('pt_url') || ''; },
   get anonKey() { return PREBAKED_KEY || localStorage.getItem('pt_anon_key') || ''; },
   get records() { try { return JSON.parse(localStorage.getItem('pt_records') || '[]'); } catch { return []; } },
-  set records(v){ localStorage.setItem('pt_records', JSON.stringify(v)); },
+  set records(v){ _recMap = null; localStorage.setItem('pt_records', JSON.stringify(v)); },
   get pending() { try { return JSON.parse(localStorage.getItem('pt_pending') || '[]'); } catch { return []; } },
   set pending(v){ localStorage.setItem('pt_pending', JSON.stringify(v)); },
   // Offline cache of remote data
@@ -366,7 +367,20 @@ function selectTech(name) {
   document.getElementById('tech-custom').value = '';
 }
 
+function showFatal(msg) {
+  const el = document.getElementById('setup-warning');
+  if (!el) return;
+  el.style.display = 'block';
+  el.innerHTML = '<p><strong>Error</strong><br></p>';
+  el.firstChild.appendChild(document.createTextNode(String(msg)));
+}
+window.addEventListener('error', e => showFatal((e.message || 'Error') + (e.lineno ? ' (line ' + e.lineno + ')' : '')));
+window.addEventListener('unhandledrejection', e => showFatal((e.reason && e.reason.message) || e.reason));
+
 function doLogin() {
+  try { doLoginInner(); } catch (e) { console.error(e); showFatal('Start failed: ' + e.message); toast('Start failed: ' + e.message, 'error'); }
+}
+function doLoginInner() {
   const custom = document.getElementById('tech-custom').value.trim();
   if (custom) app.tech = custom;
   if (!app.tech) { toast('Please select or enter your name', 'error'); return; }
@@ -382,7 +396,16 @@ function signOut() { app.tech = null; document.querySelectorAll('.tech-tile').fo
 // ── HELPERS ──────────────────────────────────────────────────────────────────
 function todayKey() { return new Date().toISOString().slice(0, 10); }
 function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
-function getRecord(unitId) { return DB.records.find(r => r.unit_id === unitId && r.tech_date === todayKey()); }
+// Cached: this is called once per unit on every screen, and DB.records re-parses
+// localStorage each time it is read — with thousands of units that froze the phone.
+function getRecord(unitId) {
+  const day = todayKey();
+  if (!_recMap || _recMap.day !== day) {
+    _recMap = { day, map: new Map() };
+    DB.records.forEach(r => { if (r.tech_date === day && !_recMap.map.has(r.unit_id)) _recMap.map.set(r.unit_id, r); });
+  }
+  return _recMap.map.get(unitId);
+}
 
 // ── SITES ────────────────────────────────────────────────────────────────────
 function renderSites() {
